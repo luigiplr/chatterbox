@@ -35,7 +35,7 @@ export default validate({
   plugins: [],
 
   externals: [
-    // put your node 3rd party libraries which can't be built with webpack here
-    // (mysql, mongodb, and so on..)
+    'fs', 'tls', 'net', 'os', 'process', 'url', 'crypto',
+    'request', 'ws'
   ]
 })
