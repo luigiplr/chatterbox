@@ -1,16 +1,15 @@
-// @flow
-import React, { Component, PropTypes } from 'react';
+import React, { PureComponent, PropTypes } from 'react'
 
-export default class App extends Component {
+export default class App extends PureComponent {
   static propTypes = {
     children: PropTypes.element.isRequired
-  };
+  }
 
   render() {
     return (
       <div>
         {this.props.children}
       </div>
-    );
+    )
   }
 }

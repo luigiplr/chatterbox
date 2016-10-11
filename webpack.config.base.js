@@ -2,8 +2,8 @@
  * Base webpack config used across other specific configs
  */
 
-import path from 'path';
-import validate from 'webpack-validator';
+import path from 'path'
+import validate from 'webpack-validator'
 
 export default validate({
   module: {
@@ -27,6 +27,7 @@ export default validate({
 
   // https://webpack.github.io/docs/configuration.html#resolve
   resolve: {
+    modulesDirectories: ['app', 'node_modules'],
     extensions: ['', '.js', '.jsx', '.json'],
     packageMains: ['webpack', 'browser', 'web', 'browserify', ['jam', 'main'], 'main']
   },
@@ -37,4 +38,4 @@ export default validate({
     // put your node 3rd party libraries which can't be built with webpack here
     // (mysql, mongodb, and so on..)
   ]
-});
+})

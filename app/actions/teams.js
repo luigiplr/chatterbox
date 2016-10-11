@@ -8,3 +8,10 @@ export function teamsReorder(order) {
 export function teamsSwitch(id) {
   return { type: TEAMS_SWITCH, payload: id }
 }
+
+
+export function loadTeams() {
+  return dispatch => {
+
+  }
+}
