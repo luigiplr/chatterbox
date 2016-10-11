@@ -1,12 +1,6 @@
 {
   "presets": ["es2015", "stage-0", "react"],
-  "plugins": [
-    "transform-runtime",
-    "syntax-async-functions",
-    "transform-regenerator",
-    "transform-decorators-legacy",
-    "add-module-exports"
-  ],
+  "plugins": ["transform-decorators-legacy", "add-module-exports"],
   "env": {
     "production": {
       "presets": ["react-optimize"],

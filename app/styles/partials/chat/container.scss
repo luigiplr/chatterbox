@@ -2,4 +2,9 @@
   display: flex;
   flex: 1;
   flex-direction: row;
+
+  .chat {
+    flex: 1;
+    flex-direction: column;
+  }
 }
