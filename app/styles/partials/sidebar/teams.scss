@@ -1,0 +1,79 @@
+.teams_container {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: 80px;
+
+  .team {
+    width: 45px;
+    height: 45px;
+    border-radius: 5px;
+    font-size: 50px;
+    cursor: pointer;
+    background-position: center;
+    background-size: contain;
+    margin-top: 15px;
+
+    &.selected {
+      position: absolute;
+      top: 0;
+      width: 55px;
+      height: 55px;
+      cursor: default;
+    }
+
+    .providerIcon {
+      max-height: 20px;
+      max-width: 20px;
+      position: relative;
+      bottom: -5px;
+      border-radius: 5px;
+      left: 35px;
+    }
+
+    .new_message {
+      position: relative;
+      left: -15px;
+      width: 9px;
+      height: 9px;
+      background-color: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      margin-top: calc(50% - 6px);
+    }
+
+    .unread_counter {
+      position: relative;
+      top: -5px;
+      right: -30px;
+      width: 24px;
+      height: 22px;
+      background-color: #fb3c4c;
+      border-radius: 40%;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 22px;
+      text-align: center;
+      color: #feecec;
+    }
+  }
+
+  .add {
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    font-size: 35px;
+    border-radius: 50%;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    color: #8e898b;
+    border: #8e898b solid 2px;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0.25;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}

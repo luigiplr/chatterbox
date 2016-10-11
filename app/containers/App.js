@@ -1,9 +1,10 @@
-import React, { PureComponent, PropTypes } from 'react'
+import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { appLoad } from 'actions/app'
+import styles from 'styles/partials/app.scss'
 
 @connect(null, { appLoad })
-export default class App extends PureComponent {
+export default class App extends Component {
   static propTypes = {
     children: PropTypes.element.isRequired,
     appLoad: PropTypes.func.isRequired
@@ -15,7 +16,7 @@ export default class App extends PureComponent {
 
   render() {
     return (
-      <div>
+      <div className={styles.app_container}>
         {this.props.children}
       </div>
     )

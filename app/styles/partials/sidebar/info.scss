@@ -1,0 +1,213 @@
+.info_container {
+  display: inline-flex;
+  flex: 1;
+
+  .team {
+    display: block;
+    padding-top: 20px;
+    padding-left: 12px;
+    margin-bottom: 25px;
+
+    .name {
+      font-size: 18px;
+      margin-bottom: 2px;
+      font-weight: 600;
+      text-rendering: optimizeLegibility;
+      letter-spacing: 0.5px;
+    }
+
+    .status {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 3px;
+      display: inline-block;
+
+      &.online {
+        background-color: #7fd421;
+      }
+
+      &.offline {
+        background-color: gray;
+      }
+
+      &.away {
+        background-color: yellow;
+      }
+    }
+
+    .handle {
+      margin-left: 4px;
+      position: relative;
+      font-weight: 400;
+      top: 1px;
+      color: rgba(255, 255, 255, 0.69);
+    }
+  }
+
+  .channelsContainer {
+    height: calc(100% - 90px);
+    padding-left: 12px;
+    overflow: auto;
+
+    &::-webkit-scrollbar-thumb,
+    &::-webkit-scrollbar-track {
+      visibility: hidden;
+    }
+
+    &:hover::-webkit-scrollbar-track {
+      visibility: visible;
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+      visibility: visible;
+      border-radius: 5px;
+      -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.55);
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .channels,
+  .dms {
+    display: block;
+    margin-right: 3px;
+    margin-bottom: 20px;
+
+    .title {
+      text-transform: capitalize;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 5px;
+
+      span {
+        // count
+        margin-left: 4px;
+        color: rgba(255, 255, 255, 0.25);
+      }
+    }
+  }
+
+  .channel {
+    padding: 4px 0 4px 8px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 100ms ease-in-out;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.06);
+    }
+
+    &.active {
+      background-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .privateIcon {
+      color: gray;
+      margin-right: 3px;
+      position: relative;
+      font-size: 12px;
+      vertical-align: text-top;
+    }
+
+    p {
+      // name
+      padding: 0;
+      margin: 0;
+      font-size: 14px;
+      display: inline-block;
+      color: rgba(255, 255, 255, 0.58);
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 145px;
+    }
+
+    &.active p {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    &.attention p {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 600;
+    }
+
+    .missed_pings {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      background-color: #fb3c4c;
+      border-radius: 25%;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 20px;
+      text-align: center;
+      color: #feecec;
+      margin-left: 10px;
+    }
+  }
+
+  .dms .dm {
+    padding: 5px 0 5px 3px;
+    margin-left: 2px;
+    height: auto;
+    position: relative;
+
+    .image {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      vertical-align: text-top;
+      display: inline-block;
+      background-position: center;
+      background-size: contain;
+      opacity: 0.48;
+    }
+
+    &.online .image,
+    &:hover .image {
+      opacity: 1;
+    }
+
+    .status {
+      width: 8px;
+      height: 8px;
+      position: absolute;
+      margin-top: 12px;
+      left: 27px;
+      bottom: 5px;
+      border-radius: 50%;
+    }
+
+    &.online .status {
+      background-color: #7ed320;
+    }
+
+    .name {
+      display: inline-block;
+      font-size: 14px;
+      line-height: 32px;
+      color: rgba(255, 255, 255, 0.48);
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      margin-left: 8px;
+      position: absolute;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 145px;
+    }
+
+    &.online .name {
+      color: rgba(255, 255, 255, 0.58);
+    }
+
+    &.active .name {
+      color: rgba(255, 255, 255, 0.85);
+    }
+  }
+}
