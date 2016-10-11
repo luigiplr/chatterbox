@@ -7,8 +7,8 @@ export default class Header extends Component {
 
   render() {
     return (
-      <div className={styles.header_container}>
-      </div>
+      <section className={styles.header_container}>
+      </section>
     )
   }
 }

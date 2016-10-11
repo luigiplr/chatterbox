@@ -5,8 +5,8 @@ import { Router, hashHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import routes from './routes'
 import configureStore from './store/configureStore'
-import 'styles/vender/normalize.global.css'
-import './app.global.css'
+import 'react-virtualized/styles.css'
+import 'styles/vender/normalize.css'
 
 global._teams = {}
 const store = configureStore()

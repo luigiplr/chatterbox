@@ -4,6 +4,7 @@
   flex-direction: row;
 
   .chat {
+    display: inline-flex;
     flex: 1;
     flex-direction: column;
   }
