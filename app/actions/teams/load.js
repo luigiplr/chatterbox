@@ -10,8 +10,11 @@ export function loadTeams() {
   return dispatch => {
     const teams = getTeams()
     forEach(teams, ({ type, ...team }, id) => {
-      const Handler = providers[type]
-      global._teams[id] = new Handler(team, dispatch)
+      if (!global._teams[id]) {
+        global._teams[id] = new providers[type](team, dispatch)
+      } else {
+        console.error(`${id} has already been initialized`)
+      }
     })
   }
 }

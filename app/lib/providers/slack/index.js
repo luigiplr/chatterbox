@@ -1,11 +1,14 @@
-import { forEach, pickBy, get, pick } from 'lodash'
+import { forEach, pickBy, get, pick, last } from 'lodash'
 import { WebClient, RtmClient, MemoryDataStore, CLIENT_EVENTS, RTM_EVENTS } from '@slack/client'
-// import { santitizeUser, parseMessage } from './helpers'
+import { santitizeUser } from './helpers'
+import { teamLoad, teamLoadSuccess, teamLoadFail } from 'actions/team/load'
 
 
 export default class SlackHandler {
-  constructor({ auth: { token } }, dispatch) {
+  constructor({ auth: { token }, id }, dispatch) {
     this._dispatch = dispatch
+
+    dispatch(teamLoad({ id }))
 
     this._slack = new RtmClient(token, {
       logLevel: 'error',
@@ -40,7 +43,14 @@ export default class SlackHandler {
 
     this._slack.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, () => {
       this._canSend = true
-      console.log('Slack connection opened')
+      const users = this._loadUsers()
+
+      dispatch(teamLoadSuccess({
+        channels: this._loadChannles(users),
+        dms: this._loadDirectMessages(users),
+        users,
+        team: this._loadTeam()
+      }))
     })
 
     //  this._slack.on(RTM_EVENTS.MESSAGE, parseMessage.bind(this))
@@ -61,16 +71,58 @@ export default class SlackHandler {
 
   /* Start of load methods */
 
-  _loadChannles() {
-
+  _loadChannles(users) {
+    const channels = {}
+    forEach({...this._slack.dataStore.channels, ...this._slack.dataStore.groups }, ({ is_archived, is_open, is_member: isMember, name, is_general: main, id, members, topic, purpose }) => {
+      if (is_archived || (!is_open && id.startsWith('G'))) return
+      channels[id] = ({
+        isMember: id.startsWith('G') || isMember,
+        isPrivate: id.startsWith('G'),
+        name: id.startsWith('G') ? name : `#${name}`,
+        id,
+        main,
+        members: members && members.map(id => users[id] ? id : false).filter(Boolean) || [],
+        meta: {
+          topic: get(topic, 'value', null),
+          purpose: get(purpose, 'value', null)
+        }
+      })
+    })
+    return channels
   }
 
-  _loadDirectMessages() {
-
+  _loadDirectMessages(users) {
+    const dms = {}
+    const readableDMs = pickBy(this._slack.dataStore.dms, ({ user, is_im }) => is_im && users[user])
+    forEach(readableDMs, ({ is_open: isOpen, user, id }) => {
+      const { name, presence, images, handle } = users[user]
+      dms[id] = ({
+        isOpen,
+        id,
+        presence,
+        name: `@${handle}`,
+        handle,
+        image: last(images),
+        user,
+        meta: { members: presence, topic: name }
+      })
+    })
+    return dms
   }
 
   _loadUsers() {
+    const users = {}
+    forEach(this._slack.dataStore.users, user => {
+      if (!get(user, 'deleted', false)) {
+        users[user.id] = santitizeUser(user)
+      }
+    })
+    return users
+  }
 
+  _loadTeam() {
+    const { name, icon, id } = this._slack.dataStore.teams[Object.keys(this._slack.dataStore.teams)[0]]
+    return { name, id, image: icon.image_original }
   }
 
   /* End of load methods */
