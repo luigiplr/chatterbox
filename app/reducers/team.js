@@ -6,7 +6,7 @@ const DEFAULT_STATE = {
   focusedTeam: null
 }
 
-export default function team(state = {}, { type, payload }) {
+export default function team(state = DEFAULT_STATE, { type, payload }) {
   switch (type) {
     case TEAM_FOCUSED_CHANGE:
       return {...state, focusedTeam: payload }
