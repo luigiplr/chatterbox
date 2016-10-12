@@ -1,5 +1,6 @@
 import React, { PureComponent, PropTypes } from 'react'
 import { connect } from 'react-redux'
+import { autobind } from 'core-decorators'
 import styles from 'styles/partials/sidebar/teams.scss'
 import { changeFocusedTeam } from 'actions/team/active'
 
@@ -17,7 +18,8 @@ export default class Team extends PureComponent {
     image: PropTypes.string
   }
 
-  handleTeamClick() {
+  @autobind
+  _handleTeamClick() {
     const { id, changeFocusedTeam } = this.props
     changeFocusedTeam(id)
   }
@@ -25,7 +27,7 @@ export default class Team extends PureComponent {
   render() {
     const { image } = this.props
     return (
-      <div className={styles.team} style={{backgroundImage: `url(${image})`}}>
+      <div className={styles.team} onClick={this._handleTeamClick} style={{backgroundImage: `url(${image})`}}>
       </div>
     )
   }

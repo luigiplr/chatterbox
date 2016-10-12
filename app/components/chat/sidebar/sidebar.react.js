@@ -4,8 +4,8 @@ import Teams from './teams'
 import Info from './info'
 import styles from 'styles/partials/sidebar/container.scss'
 
-function mapStateToProps({ teams: { loaded }, team: { focusedID } }, { id }) {
-  return { teams: Object.keys(loaded), team: focusedID }
+function mapStateToProps({ teams: { loaded }, team: { focusedTeam } }, { id }) {
+  return { teams: Object.keys(loaded), team: focusedTeam }
 }
 
 @connect(mapStateToProps)
@@ -20,7 +20,7 @@ export default class Sidebar extends Component {
     return (
       <div className={styles.sidebar_container}>
         <Teams teams={teams} />
-        <Info id={team} />
+        {team && <Info id={team} />}
       </div>
     )
   }

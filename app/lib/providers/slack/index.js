@@ -43,11 +43,12 @@ export default class SlackHandler {
 
     this._slack.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, () => {
       this._canSend = true
-      const users = this._loadUsers()
+      const { users, user } = this._loadUsers()
 
       dispatch(teamLoadSuccess({
         channels: this._loadChannles(users),
         dms: this._loadDirectMessages(users),
+        user,
         users,
         team: this._loadTeam()
       }))
@@ -111,13 +112,14 @@ export default class SlackHandler {
   }
 
   _loadUsers() {
+    const { activeUserId, dataStore } = this._slack
     const users = {}
-    forEach(this._slack.dataStore.users, user => {
+    forEach(dataStore.users, user => {
       if (!get(user, 'deleted', false)) {
         users[user.id] = santitizeUser(user)
       }
     })
-    return users
+    return { users, user: users[activeUserId] }
   }
 
   _loadTeam() {
