@@ -1,13 +1,15 @@
-import React, { Component, PropTypes } from 'react'
+import React, { PropTypes } from 'react'
+import Team from './team.react'
 import styles from 'styles/partials/sidebar/teams.scss'
 
-export default class Teams extends Component {
-  static propTypes = {}
+export default function Teams({ teams }) {
+  return (
+    <div className={styles.teams_container}>
+      {teams.map(id => <Team key={id} id={id} />)}
+    </div>
+  )
+}
 
-  render() {
-    return (
-      <div className={styles.teams_container}>
-      </div>
-    )
-  }
+Teams.propTypes = {
+  teams: PropTypes.array.isRequired
 }

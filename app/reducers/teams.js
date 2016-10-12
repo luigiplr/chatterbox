@@ -6,7 +6,7 @@ function loaded(state = {}, { type, payload }) {
   switch (type) {
     case TEAM_LOAD_SUCCESS:
       let { team, ...rest } = payload
-      return { ...state, [team.id]: rest }
+      return { ...state, [team.id]: { team, ...rest } }
     default:
       return state
   }
