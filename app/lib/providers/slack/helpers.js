@@ -10,3 +10,12 @@ export function santitizeUser({ tz: timezone, id, deleted, profile, name: handle
     meta: { timezone, email: _.get(profile, 'email') }
   }
 }
+
+export function santitizeMessage({ user, type, ts, text }) {
+  switch (type) {
+    case 'message':
+      return { text, user, timestamp: ts }
+    default:
+
+  }
+}

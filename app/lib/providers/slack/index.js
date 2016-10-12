@@ -2,6 +2,7 @@ import { forEach, pickBy, get, pick, last } from 'lodash'
 import { WebClient, RtmClient, MemoryDataStore, CLIENT_EVENTS, RTM_EVENTS } from '@slack/client'
 import { santitizeUser } from './helpers'
 import { teamLoad, teamLoadSuccess, teamLoadFail } from 'actions/team/load'
+import { messageAdd } from 'actions/message/add'
 
 
 export default class SlackHandler {
@@ -54,7 +55,15 @@ export default class SlackHandler {
       }))
     })
 
-    //  this._slack.on(RTM_EVENTS.MESSAGE, parseMessage.bind(this))
+    this._slack.on(RTM_EVENTS.MESSAGE, message => {
+      console.log(message)
+      /*
+      message = santitizeMessage(message)
+      if (message) {
+        dispatch()
+      }
+      */
+    })
 
     this._slack.start()
   }
