@@ -1,13 +1,14 @@
 import { forEach, pickBy, get, pick, last } from 'lodash'
 import { WebClient, RtmClient, MemoryDataStore, CLIENT_EVENTS, RTM_EVENTS } from '@slack/client'
-import { santitizeUser } from './helpers'
+import { autobind } from 'core-decorators'
+import { santitizeUser, parseMessage } from './helpers'
 import { teamLoad, teamLoadSuccess, teamLoadFail } from 'actions/team/load'
 import { messageAdd } from 'actions/message/add'
 
 
 export default class SlackHandler {
   constructor({ auth: { token }, id }, dispatch) {
-    this._dispatch = dispatch
+    this._parseMessage = parseMessage.bind(this, dispatch)
 
     dispatch(teamLoad({ id }))
 
@@ -44,25 +45,30 @@ export default class SlackHandler {
 
     this._slack.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, () => {
       this._canSend = true
+
       const { users, user } = this._loadUsers()
+      Object.assign(this, { _user: user, _users: users })
+      this._channels = this._loadChannles()
+      this._dms = this._loadDirectMessages()
+      this._team = this._loadTeam()
 
       dispatch(teamLoadSuccess({
-        channels: this._loadChannles(users),
-        dms: this._loadDirectMessages(users),
+        channels: this._channels,
+        dms: this._dms,
         user,
         users,
-        team: this._loadTeam()
+        team: this._team
       }))
     })
 
     this._slack.on(RTM_EVENTS.MESSAGE, message => {
       console.log(message)
-      /*
-      message = santitizeMessage(message)
-      if (message) {
-        dispatch()
-      }
-      */
+        /*
+        message = santitizeMessage(message)
+        if (message) {
+          dispatch()
+        }
+        */
     })
 
     this._slack.start()
@@ -82,16 +88,18 @@ export default class SlackHandler {
       else if (channel_or_dm_id.startsWith('G')) method = 'groups'
       this._slack._webClient[method].history(channel_or_dm_id, { inclusive, count, latest, oldest, unreads: true }, (a, { has_more, messages = [], ok, unread_count_display }) => {
         if (!ok) return reject()
-        resolve(messages)
+        resolve(messages.map(m => this._parseMessage(m)).filter(Boolean).reverse())
       })
     })
   }
 
+
   /* Start of load methods */
 
-  _loadChannles(users) {
+  _loadChannles() {
+    const { _users, _slack } = this
     const channels = {}
-    forEach({...this._slack.dataStore.channels, ...this._slack.dataStore.groups }, ({ is_archived, is_open, is_member: isMember, name, is_general: main, id, members, topic, purpose }) => {
+    forEach({..._slack.dataStore.channels, ..._slack.dataStore.groups }, ({ is_archived, is_open, is_member: isMember, name, is_general: main, id, members, topic, purpose }) => {
       if (is_archived || (!is_open && id.startsWith('G'))) return
       channels[id] = ({
         isMember: id.startsWith('G') || isMember,
@@ -99,7 +107,7 @@ export default class SlackHandler {
         name: id.startsWith('G') ? name : `#${name}`,
         id,
         main,
-        members: members && members.map(id => users[id] ? id : false).filter(Boolean) || [],
+        members: members && members.map(id => _users[id] ? id : false).filter(Boolean) || [],
         meta: {
           topic: get(topic, 'value', null),
           purpose: get(purpose, 'value', null)
@@ -109,11 +117,12 @@ export default class SlackHandler {
     return channels
   }
 
-  _loadDirectMessages(users) {
+  _loadDirectMessages() {
+    const { _users, _slack } = this
     const dms = {}
-    const readableDMs = pickBy(this._slack.dataStore.dms, ({ user, is_im }) => is_im && users[user])
+    const readableDMs = pickBy(_slack.dataStore.dms, ({ user, is_im }) => is_im && _users[user])
     forEach(readableDMs, ({ is_open: isOpen, user, id }) => {
-      const { name, presence, images, handle } = users[user]
+      const { name, presence, images, handle } = _users[user]
       dms[id] = ({
         isOpen,
         id,
