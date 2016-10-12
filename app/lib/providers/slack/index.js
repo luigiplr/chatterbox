@@ -66,8 +66,16 @@ export default class SlackHandler {
   _canSend = false
   _connected = false
 
-  _getHistory({ id }) {
-
+  loadHistory(channel_or_dm_id, { count = 100, latest = null, oldest = null, inclusive = 0 } = {}) {
+    return new Promise((resolve, reject) => {
+      let method = 'channels'
+      if (channel_or_dm_id.startsWith('D')) method = 'im'
+      else if (channel_or_dm_id.startsWith('G')) method = 'groups'
+      this._slack._webClient[method].history(channel_or_dm_id, { inclusive, count, latest, oldest, unreads: true }, (a, { has_more, messages = [], ok, unread_count_display }) => {
+        if (!ok) return reject()
+        resolve(messages)
+      })
+    })
   }
 
   /* Start of load methods */
