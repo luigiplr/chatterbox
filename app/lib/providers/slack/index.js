@@ -1,8 +1,10 @@
 import { forEach, pickBy, get, pick, last } from 'lodash'
 import { WebClient, RtmClient, MemoryDataStore, CLIENT_EVENTS, RTM_EVENTS } from '@slack/client'
 import { autobind } from 'core-decorators'
+import moment from 'moment'
 import { santitizeUser, parseMessage } from './helpers'
 import { teamLoad, teamLoadSuccess, teamLoadFail } from 'actions/team/load'
+import { addMessage } from 'actions/message/add'
 
 export default class SlackHandler {
   constructor({ auth: { token }, id }, dispatch) {
@@ -147,8 +149,21 @@ export default class SlackHandler {
 
   /* Start of message methods */
 
-  _sendMessage() {
+  @autobind
+  _sendMessage(channel, { text, sendingID }) {
+    const {_team:{id:team}, _user:{id:user}, _parseMessage, _slack} = this
+    const preMsgData = {
+      type: 'message',
+      team,
+      channel,
+      text,
+      sendingID,
+      user,
+      ts: +moment().unix()
+    }
 
+    _parseMessage(preMsgData, true)
+    return _slack.sendMessage(text, channel)
   }
 
   _editMessage() {

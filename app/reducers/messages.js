@@ -1,6 +1,7 @@
 import { MESSAGES_LOAD, MESSAGES_LOAD_SUCCESS, MESSAGES_LOAD_FAIL } from 'actions/messages'
 import { MESSAGE_ADD } from 'actions/message/add'
-import { update, get } from 'lodash'
+import { MESSAGE_SEND_SUCCESS } from 'actions/message/send'
+import { update, get, findIndex } from 'lodash'
 
 const DEFAULT_STATE = {
   errors: {}
@@ -25,6 +26,8 @@ export default function messages(state = DEFAULT_STATE, { type, payload }) {
   switch (type) {
     case MESSAGE_ADD:
       return addMessageToTeamChannel(state, payload)
+    case MESSAGE_SEND_SUCCESS:
+      return markMessageAsSent(state, payload)
     case MESSAGES_LOAD:
       return setChannelOrDMLoadingState(state, payload, true)
     case MESSAGES_LOAD_SUCCESS:
@@ -34,6 +37,15 @@ export default function messages(state = DEFAULT_STATE, { type, payload }) {
     default:
       return state
   }
+}
+
+function markMessageAsSent(state, { team, id, sendingID, message }){
+  const newState = { ...state }
+  update(newState, `${team}.${id}`, ({ messages = [], ...data } = {}) => {
+    messages[findIndex(messages, ['sendingID', sendingID])] = message
+    return { messages, ...data }
+  })
+  return newState
 }
 
 function addMessageToTeamChannel(state, { team, channel_or_dm_id, message }) {

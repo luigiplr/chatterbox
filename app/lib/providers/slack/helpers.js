@@ -15,11 +15,12 @@ export function santitizeUser({ tz: timezone, id, deleted, profile, name: handle
   }
 }
 
-function santitizeMessage({ user, text, ts: timestamp, user_profile: userProfile = null, attachments = [], edited = '' }) {
+function santitizeMessage({ user, text, ts: timestamp, user_profile: userProfile = null, attachments = [], edited = '', sendingID }) {
   return {
     id: timestamp,
     ...omitBy({
       //    attachments: santitizeAttachments.bind(this)(attachments),
+      sendingID,
       user,
       text: text && formatter.bind(this)(text),
       userProfile,
@@ -29,7 +30,7 @@ function santitizeMessage({ user, text, ts: timestamp, user_profile: userProfile
   }
 }
 
-export function parseMessage(dispatch, { type, subtype, team, channel, bot_id, ...messageData }, peerEvent = false) {
+export function parseMessage(dispatch, { type, subtype, team, channel, bot_id, ...messageData }, organic = false) {
   let isBot = Boolean(bot_id)
   let userProfileChecked = false
   switch (subtype ? `${type}:${subtype}` : type) {
@@ -53,7 +54,7 @@ export function parseMessage(dispatch, { type, subtype, team, channel, bot_id, .
         }
 
         const msg = omitBy({ isBot, ...santitizeMessage.bind(this)(messageData) }, isNil)
-        if(peerEvent) dispatch(addMessage(team, channel, msg))
+        if(organic) dispatch(addMessage(team, channel, msg))
         return msg
       }
     case 'message:message_changed':

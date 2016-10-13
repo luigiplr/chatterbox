@@ -13,12 +13,12 @@ export default class Sender extends Component {
   }
 
   @autobind
-  handleKeyPress(event) {
+  _handleKeyPress(event) {
     if (event.keyCode == 13 && !event.shiftKey) {
       event.preventDefault()
       const { value: chatText } = this.refs['chat-input']
       if (chatText.replace(/(\r\n|\n|\r)/gm, '').length === 0) return
-      const {sendMessage, channelorDMID, team} = this.props
+      const { sendMessage, channelorDMID, team } = this.props
       sendMessage(team, channelorDMID, chatText)
       this.refs['chat-input'].value = ''
     }

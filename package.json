@@ -85,6 +85,7 @@
     "react": "^15.3.2",
     "react-addons-shallow-compare": "^15.3.2",
     "react-dom": "^15.3.2",
+    "react-mousetrap": "^0.1.1",
     "react-redux": "^4.4.5",
     "react-router": "^2.8.1",
     "react-router-redux": "^4.0.6",

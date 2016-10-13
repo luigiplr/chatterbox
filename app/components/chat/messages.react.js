@@ -8,7 +8,7 @@ import styles from 'styles/partials/chat/messages.scss'
 
 function mapStateToProps({ messages: allMessages }, { team, channelorDMID }) {
   const { messages = [], isLoading = true } = get(allMessages, `${team}.${channelorDMID}`, {})
-  return { messages, isLoading }
+  return { messages: messages.length, isLoading }
 }
 
 const cellSizeCache = new CellSizeCache({
@@ -21,7 +21,7 @@ export default class Messages extends Component {
   static propTypes = {
     team: PropTypes.string.isRequired,
     channelorDMID: PropTypes.string.isRequired,
-    messages: PropTypes.array
+    messages: PropTypes.number
   }
 
   componentWillUpdate({ team: newTeam, channelorDMID: newChannelorDMID }) {
@@ -37,16 +37,14 @@ export default class Messages extends Component {
   @autobind
   _messageRenderer({ index, rowIndex, style = {}, isScrolling, key }) {
     const messageIndex = index === undefined ? rowIndex : index
-    const { messages } = this.props
-    const message = messages[messageIndex]
-    const firstInChain = messageIndex === 0 ? true : message.user !== get(messages[messageIndex-1], 'user', message.user)
-    return <Message style={style} firstInChain={firstInChain} key={key || rowIndex} {...message} />
+    const { channelorDMID, team } = this.props
+    return <Message style={style} key={messageIndex} index={messageIndex} channelorDMID={channelorDMID} team={team} />
   }
 
 
   render() {
     const { messages } = this.props
-    const estimatedSize = 60 * messages.length
+    const estimatedSize = 60 * messages
     return (
       <section className={styles.messages}>
         <AutoSizer>
@@ -55,7 +53,7 @@ export default class Messages extends Component {
               cellRenderer={this._messageRenderer}
               cellSizeCache={cellSizeCache}
               columnCount={1}
-              rowCount={messages.length}
+              rowCount={messages}
               width={width}
             >
               {({ getRowHeight }) => (
@@ -63,7 +61,7 @@ export default class Messages extends Component {
                   className={styles.scroller}
                   height={height}
                   rowRenderer={this._messageRenderer}
-                  rowCount={messages.length}
+                  rowCount={messages}
                   estimatedRowSize={60}
                   rowHeight={getRowHeight}
                   scrollToAlignment='end'
