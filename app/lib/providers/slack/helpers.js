@@ -53,11 +53,7 @@ export function parseMessage(dispatch, { type, subtype, team, channel, bot_id, .
         }
 
         const msg = omitBy({ isBot, ...santitizeMessage.bind(this)(messageData) }, isNil)
-
-        if(peerEvent){
-          dispatch(addMessage(team, channel, msg))
-        }
-
+        if(peerEvent) dispatch(addMessage(team, channel, msg))
         return msg
       }
     case 'message:message_changed':

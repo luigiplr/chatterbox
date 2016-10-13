@@ -4,7 +4,12 @@ import escapeStringRegexp from 'escape-string-regexp'
 import annotations from 'emoji-annotation-to-unicode'
 import replace from 'frep'
 import uuid from 'node-uuid'
-import { Code as InlineCode, Channel as InlineChannel, User as InlineUser } from 'components/chat/message/inline.react'
+import {
+  Code as InlineCode,
+  Channel as InlineChannel,
+  User as InlineUser,
+  Emoji as InlineEmoji
+ } from 'components/chat/message/inline.react'
 
 
 const codeBlockRegex = /(^|\s|[_*\?\.,\-!\^;:{(\[%$#+=\u2000-\u206F\u2E00-\u2E7F"])```([\s\S]*?)?```(?=$|\s|[_*\?\.,\-!\^;:})\]%$#+=\u2000-\u206F\u2E00-\u2E7F…"])/g
@@ -19,7 +24,7 @@ const strikeRegex = /(^|\s|[\?\.,\-!\^;:{(\[%$#+=\u2000-\u206F\u2E00-\u2E7F"])~(
 // const quoteRegex = /(^|)&gt;(?![\W_](?:&lt;|&gt;|[\|\/\\\[\]{}\(\)Dpb](?=\s|$)))(([^]*)(&gt;[^]*)*)/g
 // const longQuote = /(^|)&gt;&gt;&gt;([\s\S]*$)/
 
-const _buildImageUrl = (hex, ext = 'png') => `http://cdn.jsdelivr.net/emojione/assets/${ext}/${hex.toUpperCase()}.${ext}`
+
 const _getKey = key => key.match(/^:.*:$/) ? key.replace(/^:/, '').replace(/:$/, '') : key
 const _getEscapedKeys = hash => Object.keys(hash).map(x => escapeStringRegexp(x)).join('|')
 const emojiWithEmoticons = { delimiter: new RegExp(`(:(?:${_getEscapedKeys(annotations)}):)`, 'g'), dict: annotations }
@@ -160,7 +165,7 @@ export default function formatter(text) {
       const hex = emojiWithEmoticons.dict[key]
       if (hex) {
         const replacement = uuid.v1()
-        messageReplacementDict[replacement] = <img className='emoji' title={key} src={_buildImageUrl(hex)} />
+        messageReplacementDict[replacement] = <InlineEmoji hex={hex} key={replacement} name={key} />
         return replacement
       }
       return match
