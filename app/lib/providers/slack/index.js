@@ -3,8 +3,6 @@ import { WebClient, RtmClient, MemoryDataStore, CLIENT_EVENTS, RTM_EVENTS } from
 import { autobind } from 'core-decorators'
 import { santitizeUser, parseMessage } from './helpers'
 import { teamLoad, teamLoadSuccess, teamLoadFail } from 'actions/team/load'
-import { messageAdd } from 'actions/message/add'
-
 
 export default class SlackHandler {
   constructor({ auth: { token }, id }, dispatch) {
@@ -61,15 +59,7 @@ export default class SlackHandler {
       }))
     })
 
-    this._slack.on(RTM_EVENTS.MESSAGE, message => {
-      console.log(message)
-        /*
-        message = santitizeMessage(message)
-        if (message) {
-          dispatch()
-        }
-        */
-    })
+    this._slack.on(RTM_EVENTS.MESSAGE, m => this._parseMessage(m, true))
 
     this._slack.start()
   }

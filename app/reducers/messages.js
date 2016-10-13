@@ -1,4 +1,5 @@
 import { MESSAGES_LOAD, MESSAGES_LOAD_SUCCESS, MESSAGES_LOAD_FAIL } from 'actions/messages'
+import { MESSAGE_ADD } from 'actions/message/add'
 import { update, get } from 'lodash'
 
 const DEFAULT_STATE = {
@@ -22,6 +23,8 @@ const DEFAULT_STATE = {
 
 export default function messages(state = DEFAULT_STATE, { type, payload }) {
   switch (type) {
+    case MESSAGE_ADD:
+      return addMessageToTeamChannel(state, payload)
     case MESSAGES_LOAD:
       return setChannelOrDMLoadingState(state, payload, true)
     case MESSAGES_LOAD_SUCCESS:
@@ -31,6 +34,15 @@ export default function messages(state = DEFAULT_STATE, { type, payload }) {
     default:
       return state
   }
+}
+
+function addMessageToTeamChannel(state, { team, channel_or_dm_id, message }) {
+  const newState = { ...state }
+  update(newState, `${team}.${channel_or_dm_id}`, ({ messages = [], ...data } = {}) => ({
+    messages: [...messages, message],
+    ...data
+  }))
+  return newState
 }
 
 function addMessagesToTeamChannel(state, { team, id, messages: newMessages }) {

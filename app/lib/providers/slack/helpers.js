@@ -2,6 +2,7 @@ import { filter, get, last, omitBy, isNil } from 'lodash'
 import moment from 'moment'
 import crypto from 'crypto'
 import formatter from './formatter'
+import { addMessage } from 'actions/message/add'
 
 export function santitizeUser({ tz: timezone, id, deleted, profile, name: handle, presence }) {
   return {
@@ -28,7 +29,7 @@ function santitizeMessage({ user, text, ts: timestamp, user_profile: userProfile
   }
 }
 
-export function parseMessage(dispatch, { type, subtype, bot_id, ...messageData }) {
+export function parseMessage(dispatch, { type, subtype, team, channel, bot_id, ...messageData }, peerEvent = false) {
   let isBot = Boolean(bot_id)
   let userProfileChecked = false
   switch (subtype ? `${type}:${subtype}` : type) {
@@ -52,6 +53,11 @@ export function parseMessage(dispatch, { type, subtype, bot_id, ...messageData }
         }
 
         const msg = omitBy({ isBot, ...santitizeMessage.bind(this)(messageData) }, isNil)
+
+        if(peerEvent){
+          dispatch(addMessage(team, channel, msg))
+        }
+
         return msg
       }
     case 'message:message_changed':
