@@ -8,7 +8,7 @@ export default class Message extends Component {
   static propTypes = {
     firstInChain: PropTypes.bool,
     style: PropTypes.object,
-    text: PropTypes.string,
+    text: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
     friendlyTimestamp: PropTypes.string,
     attachments: PropTypes.array
   }

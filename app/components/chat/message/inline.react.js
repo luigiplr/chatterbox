@@ -1,4 +1,6 @@
 import React, { PropTypes, PureComponent } from 'react'
+import { shell } from 'electron'
+import { autobind } from 'core-decorators'
 import classnames from 'classnames'
 import styles from 'styles/partials/chat/message/inline.scss'
 
@@ -24,6 +26,27 @@ export function Code({ code, block = false }) {
 Code.propTypes = {
   code: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   block: PropTypes.bool
+}
+
+export class Link extends PureComponent {
+  static propTypes = {
+    url: PropTypes.string.isRequired,
+    label: PropTypes.string
+  }
+
+  @autobind
+  _handleClick(){
+    shell.openExternal(this.props.url)
+  }
+
+  render() {
+    const { url, label } = this.props
+    return (
+      <span onClick={this._handleClick} className={styles.link}>
+        {label || url}
+      </span>
+    )
+  }
 }
 
 export class User extends PureComponent {

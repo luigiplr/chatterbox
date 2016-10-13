@@ -8,7 +8,8 @@ import {
   Code as InlineCode,
   Channel as InlineChannel,
   User as InlineUser,
-  Emoji as InlineEmoji
+  Emoji as InlineEmoji,
+  Link as InlineLink
  } from 'components/chat/message/inline.react'
 
 
@@ -61,8 +62,7 @@ export default function formatter(text) {
         let url = split[0]
         if (!url.match(/^(https?:\/\/)|(mailto:)/)) return match
 
-        messageReplacementDict[replacement] = <span>{url}</span>
-          //  messageReplacementDict[replacement] = <ChatInlineLink url={url} label={label} />
+        messageReplacementDict[replacement] = <InlineLink url={url} label={label} key={replacement} />
         return replacement
       }
       return match
@@ -107,7 +107,7 @@ export default function formatter(text) {
       match = match.trim().slice(1, -1)
       if (match.length > 0) {
         const replacement = uuid.v1()
-        messageReplacementDict[replacement] = <b>{match}</b>
+        messageReplacementDict[replacement] = <b key={replacement}>{match}</b>
         return replacement
       }
       return match
@@ -118,7 +118,7 @@ export default function formatter(text) {
       match = match.trim().slice(1, -1)
       if (match.length > 0) {
         const replacement = uuid.v1()
-        messageReplacementDict[replacement] = <i>{match}</i>
+        messageReplacementDict[replacement] = <i key={replacement}>{match}</i>
         return ` ${replacement}`
       }
       return match
@@ -129,7 +129,7 @@ export default function formatter(text) {
       match = match.trim().slice(1, -1)
       if (match.length > 0) {
         const replacement = uuid.v1()
-        messageReplacementDict[replacement] = <em>{match}</em>
+        messageReplacementDict[replacement] = <em key={replacement}>{match}</em>
         return replacement
       }
       return match
