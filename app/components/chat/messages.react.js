@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react'
-import { Grid, AutoSizer, CellMeasurer, defaultCellMeasurerCellSizeCache as CellSizeCache } from 'react-virtualized'
+import { List, AutoSizer, CellMeasurer, defaultCellMeasurerCellSizeCache as CellSizeCache } from 'react-virtualized'
 import { get } from 'lodash'
 import { autobind, throttle } from 'core-decorators'
 import { connect } from 'react-redux'
@@ -36,16 +36,17 @@ export default class Messages extends Component {
 
   @autobind
   _messageRenderer({ index, rowIndex, style = {}, isScrolling, key }) {
-    const messageIndex = index || rowIndex
+    const messageIndex = index === undefined ? rowIndex : index
     const { messages } = this.props
     const message = messages[messageIndex]
-    const firstInChain = message.user !== get(messages[messageIndex-1], 'user', message.user)
+    const firstInChain = messageIndex === 0 ? true : message.user !== get(messages[messageIndex-1], 'user', message.user)
     return <Message style={style} firstInChain={firstInChain} key={key || rowIndex} {...message} />
   }
 
 
   render() {
     const { messages } = this.props
+    const estimatedSize = 60 * messages.length
     return (
       <section className={styles.messages}>
         <AutoSizer>
@@ -58,13 +59,14 @@ export default class Messages extends Component {
               width={width}
             >
               {({ getRowHeight }) => (
-                <Grid
-                  columnCount={1}
-                  columnWidth={width}
+                <List
+                  className={styles.scroller}
                   height={height}
-                  cellRenderer={this._messageRenderer}
+                  rowRenderer={this._messageRenderer}
                   rowCount={messages.length}
+                  estimatedRowSize={60}
                   rowHeight={getRowHeight}
+                  scrollToAlignment='end'
                   width={width}
                 />
               )}

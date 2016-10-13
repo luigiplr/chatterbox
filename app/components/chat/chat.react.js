@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import Header from './header.react'
+import Sender from './sender.react'
 import Messages from './messages.react'
 import styles from 'styles/partials/chat/container.scss'
 
@@ -41,6 +42,7 @@ export default class Chat extends Component {
       <div className={styles.chat}>
         <Header {...this.props} />
         <Messages {...this.props} />
+        <Sender {...this.props} />
       </div>
     )
   }

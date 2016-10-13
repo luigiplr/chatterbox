@@ -11,7 +11,8 @@ export function loadChannelOrDMMessages(team, id, options) {
       const messages = await global._teams[team].loadHistory(id, options)
       dispatch({ type: MESSAGES_LOAD_SUCCESS, payload: { team, id, messages } })
     } catch (err) {
-      dispatch({ type: MESSAGES_LOAD_FAIL, payload: { team, id } })
+      console.error(err)
+      dispatch({ type: MESSAGES_LOAD_FAIL, payload: { team, id, err } })
     }
   }
 }

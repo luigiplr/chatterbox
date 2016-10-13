@@ -8,7 +8,7 @@ import styles from 'styles/partials/sidebar/info.scss'
 
 function mapStateToProps({ teams: { loaded } }, { id }) {
   const { channels, dms, team, user } = loaded[id] || {}
-  return { channels: values(channels), dms: values(dms), team, user }
+  return { channels: values(channels).filter(({isMember}) => isMember), dms: values(dms), team, user }
 }
 
 @connect(mapStateToProps)
@@ -29,6 +29,7 @@ export default class Info extends Component {
           <div className={classnames(styles.status, [styles[user.presence]]: styles.presence)} />
           <span className={styles.handle}>{user.handle}</span>
         </div>
+
         <div className={styles.channels_container}>
           <h1 className={styles.title}>
             Channels
@@ -38,6 +39,7 @@ export default class Info extends Component {
             {channels.map(channel => <Channel key={channel.id} {...channel} />)}
           </div>
         </div>
+
         <div className={styles.dms_container}>
           <h1 className={styles.title}>
             Direct Messages
@@ -47,6 +49,7 @@ export default class Info extends Component {
             {dms.map(dm => <DirectMessage key={dm.id} {...dm} />)}
           </div>
         </div>
+
       </div>
     )
   }
