@@ -4,6 +4,7 @@ import escapeStringRegexp from 'escape-string-regexp'
 import annotations from 'emoji-annotation-to-unicode'
 import replace from 'frep'
 import uuid from 'node-uuid'
+import { Code as InlineCode, Channel as InlineChannel, User as InlineUser } from 'components/chat/message/inline.react'
 
 
 const codeBlockRegex = /(^|\s|[_*\?\.,\-!\^;:{(\[%$#+=\u2000-\u206F\u2E00-\u2E7F"])```([\s\S]*?)?```(?=$|\s|[_*\?\.,\-!\^;:})\]%$#+=\u2000-\u206F\u2E00-\u2E7F…"])/g
@@ -74,7 +75,7 @@ export default function formatter(text) {
           match = reparseMatch(match, messageReplacementDict)
         }
 
-        messageReplacementDict[replacement] = <div className='codeblock'>{match}</div>
+        messageReplacementDict[replacement] = <InlineCode key={replacement} block={true} code={match} />
         return replacement
       }
       return match
@@ -90,7 +91,7 @@ export default function formatter(text) {
           match = reparseMatch(match, messageReplacementDict)
         }
 
-        messageReplacementDict[replacement] = <span className='code'>{match}</span>
+        messageReplacementDict[replacement] = <InlineCode key={replacement} code={match} />
         return replacement
       }
       return match
@@ -135,20 +136,16 @@ export default function formatter(text) {
       if (match.length > 0) {
         const replacement = uuid.v1()
         if (match.includes('<@')) {
-          const user = match.replace(/<|>/g, '')
-          const isValidUser = _users[user.replace('@', '')]
-          if (isValidUser) {
-            messageReplacementDict[replacement] = <p></p>
-              //  messageReplacementDict[replacement] = <ChatInlineUser isPing={this.user.id === isValidUser.id} {...isValidUser} />
+          const user = match.replace(/<|>|@/g, '')
+          if (_users[user]) {
+            messageReplacementDict[replacement] = <InlineUser key={replacement} id={user} />
             return replacement
           }
           return match
         } else {
-          const channel = match.replace(/<|>|#/g, '')
-          const isValidChannel = _channels[channel]
-          if (isValidChannel) {
-            messageReplacementDict[replacement] = <p></p>
-              //    messageReplacementDict[replacement] = <ChatInlineChannel {...isValidChannel} />
+          const [channel] = match.replace(/<|>|#/g, '').split('|')
+          if (_channels[channel]) {
+            messageReplacementDict[replacement] = <InlineChannel key={replacement} id={channel} />
             return ` ${replacement}`
           }
           return match

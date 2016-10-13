@@ -1,0 +1,62 @@
+.message_container {
+  -webkit-user-select: text;
+  display: flex;
+  padding: 3px 5px 3px 0;
+  transition: background-color 50ms ease-in-out, opacity 40ms ease-in-out;
+  word-break: break-word;
+
+  &.isSending {
+    opacity: 0.4;
+  }
+
+  &.firstInChain {
+    margin-top: 6px;
+  }
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+
+    .aside .time {
+      opacity: 1;
+    }
+  }
+  @import 'aside';
+
+  .body {
+    display: inline-block;
+    flex: 1;
+    font-size: 15px;
+    text-rendering: optimizeLegibility;
+
+    .info {
+      display: block;
+      margin-bottom: 5px;
+
+      span {
+        display: inline-block;
+
+        &.time {
+          font-size: 12px;
+          top: -1px;
+          position: relative;
+          margin-left: 5px;
+          line-height: 15px;
+          font-weight: 400;
+          color: #afbcc5;
+        }
+
+        &.user {
+          font-weight: 900;
+          color: #2a2f33;
+        }
+      }
+    }
+
+    .text {
+      margin: 0;
+      display: flex;
+      line-height: 20px;
+      white-space: pre-wrap;
+    }
+  }
+}

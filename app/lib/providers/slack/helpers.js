@@ -17,7 +17,7 @@ export function santitizeUser({ tz: timezone, id, deleted, profile, name: handle
 function santitizeMessage({ user, text, ts: timestamp, user_profile: userProfile = null, attachments = [], edited = '' }) {
   return {
     id: timestamp,
-    message: omitBy({
+    ...omitBy({
       //    attachments: santitizeAttachments.bind(this)(attachments),
       user,
       text: text && formatter.bind(this)(text),
@@ -28,7 +28,7 @@ function santitizeMessage({ user, text, ts: timestamp, user_profile: userProfile
   }
 }
 
-export function parseMessage(dispatch, { type, subtype, bot_id, ...messageData }, peerEvent = false) {
+export function parseMessage(dispatch, { type, subtype, bot_id, ...messageData }) {
   let isBot = Boolean(bot_id)
   let userProfileChecked = false
   switch (subtype ? `${type}:${subtype}` : type) {

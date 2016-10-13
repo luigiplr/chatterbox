@@ -1,0 +1,47 @@
+.code {
+  color: #d34d4d;
+  border: 1px solid #d4d4d4;
+  background-color: #fff8f8;
+  border-radius: 3px;
+  padding: 0 4px;
+  font-family: monospace;
+  font-size: 13px;
+
+  .link {
+    color: #d34d4d;
+  }
+}
+
+.codeblock {
+  color: #757575;
+  border: 1px solid #d4d4d4;
+  background-color: #fff8f8;
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-family: monospace;
+  font-size: 13px;
+  white-space: pre-wrap;
+  width: 97%;
+}
+
+.emoji {
+  height: 20px;
+}
+
+.channel,
+.link,
+.user {
+  cursor: pointer;
+  color: #08c;
+  display: inline-block;
+  position: relative;
+
+  &:hover {
+    color: rgba(0, 136, 204, 0.81);
+    text-decoration: underline;
+  }
+
+  &:visited {
+    color: #2a80b9;
+  }
+}

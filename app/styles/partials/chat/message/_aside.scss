@@ -1,0 +1,26 @@
+.aside {
+  display: inline-block;
+  width: 60px;
+  vertical-align: top;
+  padding-left: 15px;
+  top: 0;
+
+  .profile_pic {
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: block;
+    background-size: contain;
+  }
+
+  .time {
+    opacity: 0;
+    font-size: 12px;
+    top: -1px;
+    position: relative;
+    margin-left: 5px;
+    line-height: 15px;
+    font-weight: 400;
+    color: #afbcc5;
+  }
+}
