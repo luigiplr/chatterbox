@@ -28,7 +28,7 @@ export default class DirectMessage extends Component {
   render() {
     const { image, active, handle, presence } = this.props
     return (
-      <div onClick={this._handleOnClick} className={classnames(styles.dm, { [styles.active]: active }, { [styles.online]: presence })}>
+      <div onClick={this._handleOnClick} className={classnames(styles.dm, { [styles.active]: active }, styles[presence])}>
         <div className={styles.status} />
         <div className={styles.image} style={{backgroundImage: `url(${image})`}} />
         <div className={styles.name}>{handle}</div>

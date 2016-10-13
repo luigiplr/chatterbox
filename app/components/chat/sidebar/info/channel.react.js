@@ -30,8 +30,8 @@ export default class Channel extends Component {
     const { active, name, isPrivate } = this.props
     return (
       <div onClick={this._handleOnClick} className={classnames(styles.channel, {[styles.active]: active})}>
-        {isPrivate ? <i className='ion-locked privateIcon' /> : null}
-        <p>{name}</p>
+        {isPrivate && <i className={classnames('ion-locked', styles.privateIcon)} />}
+        <p className={styles.name}>{name}</p>
       </div>
     )
   }
