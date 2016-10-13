@@ -3,6 +3,7 @@ import classnames from 'classnames'
 import { values } from 'lodash'
 import { connect } from 'react-redux'
 import Channel from './channel.react'
+import DirectMessage from './directMessage.react'
 import styles from 'styles/partials/sidebar/info.scss'
 
 function mapStateToProps({ teams: { loaded } }, { id }) {
@@ -20,7 +21,7 @@ export default class Info extends Component {
   }
 
   render() {
-    const { channels, team, user } = this.props
+    const { channels, dms, team, user } = this.props
     return (
       <div className={styles.info_container}>
         <div className={styles.team}>
@@ -29,14 +30,24 @@ export default class Info extends Component {
           <span className={styles.handle}>{user.handle}</span>
         </div>
         <div className={styles.channels_container}>
-          <h1 className={styles.title}>Channels</h1>
-          {channels.map(channel => <Channel key={channel.id} {...channel} />)}
+          <h1 className={styles.title}>
+            Channels
+            <span>({channels.length})</span>
+          </h1>
+          <div className={styles.scroll}>
+            {channels.map(channel => <Channel key={channel.id} {...channel} />)}
+          </div>
+        </div>
+        <div className={styles.dms_container}>
+          <h1 className={styles.title}>
+            Direct Messages
+            <span>({dms.length})</span>
+          </h1>
+          <div className={styles.scroll}>
+            {dms.map(dm => <DirectMessage key={dm.id} {...dm} />)}
+          </div>
         </div>
       </div>
     )
   }
-}
-
-function TeamUser() {
-
 }

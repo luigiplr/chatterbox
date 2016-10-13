@@ -17,14 +17,9 @@ export default class Message extends Component {
     users: PropTypes.object.isRequired
   }
 
-  get user() {
-    return this.context.users[this.props.user]
-  }
-
   render() {
-    const { style, firstInChain, friendlyTimestamp, text, attachments } = this.props
-    const { user } = this
-  //  console.log(this)
+    const { style, firstInChain, friendlyTimestamp, text, attachments, user: userID } = this.props
+    const user = this.context.users[userID]
     return (
       <div className={classnames(styles.message_container, {[styles.firstInChain]: firstInChain})} style={style}>
         <Aside user={user} firstInChain={firstInChain} friendlyTimestamp={friendlyTimestamp} />
