@@ -152,7 +152,7 @@ export default class SlackHandler {
   @autobind
   _sendMessage(channel, { text, sendingID }) {
     const {_team:{id:team}, _user:{id:user}, _parseMessage, _slack} = this
-    const preMsgData = {
+    _parseMessage({
       type: 'message',
       team,
       channel,
@@ -160,10 +160,8 @@ export default class SlackHandler {
       sendingID,
       user,
       ts: +moment().unix()
-    }
-
-    _parseMessage(preMsgData, true)
-    return _slack.sendMessage(text, channel)
+    }, true)
+    return _slack.sendMessage(text, channel).then(m => _parseMessage(m))
   }
 
   _editMessage() {
