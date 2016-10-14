@@ -17,7 +17,7 @@ export function loadChannelOrDMMessages(team, id, options) {
   }
 }
 
-export function channelOrDMMessagesHasLoaded({ messages }, team, id) {
+export function channelOrDMMessagesHasLoaded({ chat: { messages } }, team, id) {
   const isLoading = get(messages, `${team}.${id}.isLoading`, true)
   const hasLoaded = get(messages, `${team}.${id}.hasLoaded`, false)
   return !isLoading && hasLoaded

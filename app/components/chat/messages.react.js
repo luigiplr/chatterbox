@@ -4,11 +4,13 @@ import { get } from 'lodash'
 import { autobind, throttle } from 'core-decorators'
 import { connect } from 'react-redux'
 import Message from './message'
+import { chatScrollChanged } from 'actions/chat/scroll'
 import styles from 'styles/partials/chat/messages.scss'
 
-function mapStateToProps({ chat: { messages: allMessages } }, { team, channelorDMID }) {
+function mapStateToProps({ chat: { messages: allMessages, scroll } }, { team, channelorDMID }) {
   const { messages = [], isLoading = true } = get(allMessages, `${team}.${channelorDMID}`, {})
-  return { messages: messages.length, isLoading }
+  const scrollTop = get(scroll, `${team}.${channelorDMID}`, 0)
+  return { messages: messages.length, isLoading, scrollTop }
 }
 
 const cellSizeCache = new CellSizeCache({
@@ -16,17 +18,29 @@ const cellSizeCache = new CellSizeCache({
   uniformColumnWidth: true
 })
 
-@connect(mapStateToProps)
+@connect(mapStateToProps, { chatScrollChanged })
 export default class Messages extends Component {
   static propTypes = {
+    scrollTop: PropTypes.number,
     team: PropTypes.string.isRequired,
     channelorDMID: PropTypes.string.isRequired,
-    messages: PropTypes.number
+    messages: PropTypes.number,
+    chatScrollChanged: PropTypes.func.isRequired
   }
 
   componentWillUpdate({ team: newTeam, channelorDMID: newChannelorDMID }) {
     if(newTeam !== this.props.team || this.props.channelorDMID !== newChannelorDMID) {
+      this._hasScrolled = false
       cellSizeCache.clearAllRowHeights()
+    }
+  }
+
+  componentDidUpdate() {
+    if(!this._hasScrolled && this.props.messages) {
+      if(!this.props.scrollTop) {
+        this.props.chatScrollChanged(this._list.Grid._scrollingContainer.scrollHeight)
+      }
+      this._hasScrolled = true
     }
   }
 
@@ -41,10 +55,15 @@ export default class Messages extends Component {
     return <Message style={style} key={messageIndex} index={messageIndex} channelorDMID={channelorDMID} team={team} />
   }
 
+  @autobind
+  _onScroll({ scrollTop }) {
+    if(this._hasScrolled && scrollTop !== this.props.scrollTop) {
+      this.props.chatScrollChanged(scrollTop)
+    }
+  }
 
   render() {
-    const { messages } = this.props
-    const estimatedSize = 60 * messages
+    const { messages, scrollTop } = this.props
     return (
       <section className={styles.messages}>
         <AutoSizer>
@@ -58,13 +77,16 @@ export default class Messages extends Component {
             >
               {({ getRowHeight }) => (
                 <List
+                  ref={ref => this._list = ref}
                   className={styles.scroller}
                   height={height}
+                  scrollTop={scrollTop !== 0 ? scrollTop : null}
+                  onScroll={this._onScroll}
                   rowRenderer={this._messageRenderer}
                   rowCount={messages}
                   estimatedRowSize={60}
+                  overscanRowCount={5}
                   rowHeight={getRowHeight}
-                  scrollToAlignment='end'
                   width={width}
                 />
               )}
