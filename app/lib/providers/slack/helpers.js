@@ -2,6 +2,7 @@ import { filter, get, last, omitBy, isNil } from 'lodash'
 import moment from 'moment'
 import crypto from 'crypto'
 import formatter from './formatter'
+import santitizeAttachments from './attachments'
 import { addMessage } from 'actions/message/add'
 
 export function santitizeUser({ tz: timezone, id, deleted, profile, name: handle, presence }) {
@@ -19,7 +20,7 @@ function santitizeMessage({ user, text, ts: timestamp, user_profile: userProfile
   return {
     id: timestamp,
     ...omitBy({
-      //    attachments: santitizeAttachments.bind(this)(attachments),
+      attachments: santitizeAttachments.bind(this)(attachments),
       sendingID,
       user,
       text: text && formatter.bind(this)(text),

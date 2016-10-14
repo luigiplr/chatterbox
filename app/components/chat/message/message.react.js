@@ -3,6 +3,7 @@ import { get } from 'lodash'
 import { connect } from 'react-redux'
 import { autobind } from 'core-decorators'
 import classnames from 'classnames'
+import Attachments from './attachments.react'
 import styles from 'styles/partials/chat/message/message.scss'
 
 function mapStateToProps({ messages }, { team, channelorDMID, index }) {
@@ -48,6 +49,7 @@ export default class Message extends Component {
         <div className={styles.body}>
           {firstInChain && <Info {...user} friendlyTimestamp={friendlyTimestamp} />}
           {text && <div className={styles.text}>{text}</div>}
+          <Attachments attachments={attachments} />
         </div>
       </div>
     )
