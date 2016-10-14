@@ -28,16 +28,24 @@ export default class Message extends Component {
     friendlyTimestamp: PropTypes.string,
     attachments: PropTypes.array,
     sendingID: PropTypes.string,
-    edited: PropTypes.string
+    edited: PropTypes.string,
+    index: PropTypes.number.isRequired
   }
 
   static contextTypes = {
-    users: PropTypes.object.isRequired
+    users: PropTypes.object.isRequired,
+    recomputeRowHeight: PropTypes.func.isRequired
   }
 
   get user() {
     const { props: { user, userProfile }, context: { users } } = this
     return userProfile || users[user] || {}
+  }
+
+  componentDidUpdate({ edited: prevEdited }) {
+    if (prevEdited !== this.props.edited) {
+      this.context.recomputeRowHeight(this.props.index)
+    }
   }
 
   render() {

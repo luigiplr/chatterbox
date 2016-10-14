@@ -36,6 +36,14 @@ export default class Messages extends Component {
     chatScrollChanged: PropTypes.func.isRequired
   }
 
+  static childContextTypes = {
+    recomputeRowHeight: PropTypes.func.isRequired
+  }
+
+  getChildContext() {
+    return { recomputeRowHeight: this._recomputeRowHeight }
+  }
+
   componentDidMount() {
     window.addEventListener('resize', this._clearAllRowHeights, { passive: true })
   }
@@ -80,8 +88,10 @@ export default class Messages extends Component {
   }
 
   @autobind
+  @throttle(20)
   _clearAllRowHeights() {
     cellSizeCache.clearAllRowHeights()
+    this._list.forceUpdateGrid()
   }
 
   get scrollableHeight() {
@@ -131,6 +141,13 @@ export default class Messages extends Component {
     if(!this._scrolling && this._hasScrolled && scrollTop !== this.props.scrollTop ) {
       this.props.chatScrollChanged(scrollTop)
     }
+  }
+
+  @autobind
+  _recomputeRowHeight(index) {
+    cellSizeCache.clearRowHeight(index)
+    this._list.recomputeRowHeights(index)
+    this._list.forceUpdateGrid()
   }
 
   render() {
