@@ -39,6 +39,7 @@ export default class Messages extends Component {
   componentWillUpdate({ team: newTeam, channelorDMID: newChannelorDMID, messages: newMessages }) {
     if(newTeam !== this.props.team || this.props.channelorDMID !== newChannelorDMID) {
       this._hasScrolled = false
+      this._originalScrollPos = null
       cellSizeCache.clearAllRowHeights()
     }
 
@@ -54,7 +55,10 @@ export default class Messages extends Component {
   componentDidUpdate() {
     if(!this._hasScrolled && this.props.messages) {
       if(!this.props.scrollTop) {
-        this.props.chatScrollChanged(this._list.Grid._scrollingContainer.scrollHeight)
+        this._originalScrollPos = this._list.Grid._scrollingContainer.scrollHeight
+        raf(() =>
+          this.props.chatScrollChanged(this._originalScrollPos)
+        )
       }
       this._hasScrolled = true
     }
@@ -139,7 +143,7 @@ export default class Messages extends Component {
                   ref={ref => this._list = ref}
                   className={styles.scroller}
                   height={height}
-                  scrollTop={scrollTop !== 0 ? scrollTop : null}
+                  scrollTop={scrollTop !== 0 ? scrollTop : (this._originalScrollPos || null)}
                   onScroll={this._onScroll}
                   rowRenderer={this._messageRenderer}
                   rowCount={messages}
