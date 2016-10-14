@@ -86,6 +86,7 @@ function getClosest(array, target) {
   return reduce(tuples, (memo, val) => (memo[1] < val[1]) ? memo : val, [-1, 999])[0]
 }
 
+const defaultImage = 'https://community.teamdynamix.com/Images/GenericUser.png'
 const findImageFromImages = memoizee((images, image, width) => {
   if(image) return image
 
@@ -95,10 +96,10 @@ const findImageFromImages = memoizee((images, image, width) => {
     widths = uniq(widths.filter(width => !isNaN(width)))
     const indexOfWidth = findIndex(images, ['width', getClosest(widths, width).toString()])
     const { url } = images[indexOfWidth] || {}
-    return url
+    return url || defaultImage
   }
 
-  return null
+  return defaultImage
 }, { maxAge: 60000, max: 20 })
 
 @connect(({ app: { screen } } ) => ({ screen }))
