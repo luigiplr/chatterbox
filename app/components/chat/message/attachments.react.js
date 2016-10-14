@@ -3,6 +3,7 @@ import ImageLoader from 'react-imageloader'
 import classnames from 'classnames'
 import { compact } from 'lodash'
 import { autobind } from 'core-decorators'
+import VideoPlayer from 'react-player'
 import { extractImageDimentions } from './helpers'
 import styles from 'styles/partials/chat/message/attachments.scss'
 
@@ -23,12 +24,12 @@ export default class Attachments extends PureComponent {
           {author && <Author name={author} image={images.author} link={links.author} service={{ name: service, image: images.service }} />}
           {text && <Text isPretext={false} text={text} />}
           {fields && <Fields data={fields} />}
+          {video && <Video {...video} />}
         </div>
       </div>,
       images.image && <Image key='image' {...images.image} />,
       images.thumb && !video && <Thumb key='thumb-image' url={images.thumb.url} />,
     ])
-    //   {video && <Video {...video} />}
   }
 
   render() {
@@ -93,6 +94,18 @@ function Author({ name, link, image, service = {} }){
       {serviceName && <div className={styles.serviceName}>{serviceName}{name && ' |'}</div>}
       {image && <div className={styles.img} style={{backgroundImage: `url(${image})`}} />}
       {name && <div className={styles.name}>{name}</div>}
+    </div>
+  )
+}
+
+function Video({ url, width, height, type }) {
+  return (
+    <div style={{ width: width > 500 ? 500 : width, height: height > 375 ? 375 : height}} className={styles.video_container}>
+      <VideoPlayer
+        className={styles.player}
+        url={url}
+        controls
+      />
     </div>
   )
 }
