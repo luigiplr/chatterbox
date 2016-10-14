@@ -41,7 +41,12 @@ export default class Messages extends Component {
       this._hasScrolled = false
       cellSizeCache.clearAllRowHeights()
     }
-    if(newMessages !== this.props.messages && this._scrollTop && this.props.scrollTop && this._scrollTop - this.props.scrollTop < 20) {
+
+    if(
+      newMessages !== this.props.messages
+      && this._scrollTop && this.props.scrollTop
+      && this.scrollableHeight - this._scrollTop < 20
+    ) {
       this._scrolling = true
     }
   }
@@ -59,13 +64,17 @@ export default class Messages extends Component {
     }
 
     if(this._scrolling) {
-      const { _scrollingContainer } = this._list.Grid
-      this._smoothScroll(_scrollingContainer.scrollHeight - this._scrollTop, _scrollingContainer, this._scrollTop)
+      this._smoothScroll(this.scrollableHeight - this._scrollTop, this._list.Grid._scrollingContainer, this._scrollTop)
     }
   }
 
   componentWillUnmount() {
     cellSizeCache.clearAllRowHeights()
+  }
+
+  get scrollableHeight() {
+    const { _scrollingContainer } = this._list.Grid
+    return _scrollingContainer.scrollHeight - _scrollingContainer.offsetHeight
   }
 
   _handleContainerScroll({ target }) {
