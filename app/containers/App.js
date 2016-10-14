@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { appLoad } from 'actions/app'
+import { appLoad } from 'actions/app/load'
 import styles from 'styles/partials/app.scss'
 
 @connect(null, { appLoad })

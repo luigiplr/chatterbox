@@ -3,8 +3,8 @@ import { WebClient, RtmClient, MemoryDataStore, CLIENT_EVENTS, RTM_EVENTS } from
 import { autobind } from 'core-decorators'
 import moment from 'moment'
 import { santitizeUser, parseMessage } from './helpers'
-import { teamLoad, teamLoadSuccess, teamLoadFail } from 'actions/team/load'
-import { addMessage } from 'actions/message/add'
+import { teamLoad, teamLoadSuccess, teamLoadFail } from 'actions/chat/team/load'
+import { addMessage } from 'actions/chat/message/add'
 
 export default class SlackHandler {
   constructor({ auth: { token }, id }, dispatch) {

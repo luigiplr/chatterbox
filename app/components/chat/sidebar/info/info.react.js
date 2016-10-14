@@ -6,7 +6,7 @@ import Channel from './channel.react'
 import DirectMessage from './directMessage.react'
 import styles from 'styles/partials/sidebar/info.scss'
 
-function mapStateToProps({ teams: { loaded } }, { id }) {
+function mapStateToProps({ chat: { teams: { loaded } } }, { id }) {
   const { channels, dms, team, user } = loaded[id] || {}
   return { channels: values(channels).filter(({isMember}) => isMember), dms: values(dms), team, user }
 }

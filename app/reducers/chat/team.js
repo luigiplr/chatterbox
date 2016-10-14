@@ -1,4 +1,4 @@
-import { TEAM_FOCUSED_CHANNEL_OR_DM_CHANGE, TEAM_FOCUSED_CHANGE } from 'actions/team/active'
+import { TEAM_FOCUSED_CHANNEL_OR_DM_CHANGE, TEAM_FOCUSED_CHANGE } from 'actions/chat/team/active'
 
 const DEFAULT_STATE = {
   focusedChannelOrDM: {},

@@ -2,10 +2,10 @@ import React, { Component, PropTypes } from 'react'
 import { autobind } from 'core-decorators'
 import { connect } from 'react-redux'
 import classnames from 'classnames'
-import { changeTeamFocusedChannelOrDM } from 'actions/team/active'
+import { changeTeamFocusedChannelOrDM } from 'actions/chat/team/active'
 import styles from 'styles/partials/sidebar/info.scss'
 
-function mapStateToProps({ team: { focusedChannelOrDM, focusedTeam } }, { id }) {
+function mapStateToProps({ chat: { team: { focusedChannelOrDM, focusedTeam } } }, { id }) {
   return { active: focusedChannelOrDM[focusedTeam] === id, focusedTeam }
 }
 

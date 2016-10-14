@@ -5,7 +5,7 @@ import Teams from './teams'
 import Info from './info'
 import styles from 'styles/partials/sidebar/container.scss'
 
-function mapStateToProps({ teams: { loaded }, team: { focusedTeam } }) {
+function mapStateToProps({ chat: { teams: { loaded }, team: { focusedTeam } } }) {
   return { teams: loaded, team: focusedTeam }
 }
 

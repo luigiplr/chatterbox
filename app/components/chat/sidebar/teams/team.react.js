@@ -2,9 +2,9 @@ import React, { PureComponent, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { autobind } from 'core-decorators'
 import styles from 'styles/partials/sidebar/teams.scss'
-import { changeFocusedTeam } from 'actions/team/active'
+import { changeFocusedTeam } from 'actions/chat/team/active'
 
-function mapStateToProps({ teams: { loaded } }, { id }) {
+function mapStateToProps({ chat: { teams: { loaded } } }, { id }) {
   const { team: { image, name } } = loaded[id]
   return { image, name }
 }

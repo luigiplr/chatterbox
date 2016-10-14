@@ -6,7 +6,7 @@ import classnames from 'classnames'
 import Attachments from './attachments.react'
 import styles from 'styles/partials/chat/message/message.scss'
 
-function mapStateToProps({ messages }, { team, channelorDMID, index }) {
+function mapStateToProps({ chat: { messages } }, { team, channelorDMID, index }) {
   messages = get(messages, `${team}.${channelorDMID}.messages`, [])
   const message = messages[index]
   let firstInChain = index === 0

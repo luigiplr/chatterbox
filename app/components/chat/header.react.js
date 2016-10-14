@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { autobind } from 'core-decorators'
 import styles from 'styles/partials/chat/header.scss'
 
-function mapStateToProps({ teams: { loaded } }, { team, channelorDMID }) {
+function mapStateToProps({ chat: { teams: { loaded } } }, { team, channelorDMID }) {
   const { channels, dms } = loaded[team]
   let [data, isDM] = [null, false]
 

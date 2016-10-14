@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { autobind } from 'core-decorators'
-import { sendMessage } from 'actions/message/send'
+import { sendMessage } from 'actions/chat/message/send'
 import styles from 'styles/partials/chat/sender.scss'
 
 @connect(null, { sendMessage })

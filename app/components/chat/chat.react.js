@@ -5,7 +5,7 @@ import Sender from './sender.react'
 import Messages from './messages.react'
 import styles from 'styles/partials/chat/container.scss'
 
-function mapStateToProps({ team: { focusedTeam, focusedChannelOrDM }, teams: { loaded } }) {
+function mapStateToProps({ chat: { team: { focusedTeam, focusedChannelOrDM }, teams: { loaded } } }) {
   const { users, channels } = loaded[focusedTeam] || {}
   return {
     users,

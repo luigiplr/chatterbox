@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import Message from './message'
 import styles from 'styles/partials/chat/messages.scss'
 
-function mapStateToProps({ messages: allMessages }, { team, channelorDMID }) {
+function mapStateToProps({ chat: { messages: allMessages } }, { team, channelorDMID }) {
   const { messages = [], isLoading = true } = get(allMessages, `${team}.${channelorDMID}`, {})
   return { messages: messages.length, isLoading }
 }

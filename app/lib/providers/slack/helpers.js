@@ -3,7 +3,7 @@ import moment from 'moment'
 import crypto from 'crypto'
 import formatter from './formatter'
 import santitizeAttachments from './attachments'
-import { addMessage } from 'actions/message/add'
+import { addMessage } from 'actions/chat/message/add'
 
 export function santitizeUser({ tz: timezone, id, deleted, profile, name: handle, presence }) {
   return {

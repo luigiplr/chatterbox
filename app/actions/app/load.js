@@ -1,4 +1,4 @@
-import { loadTeams } from './teams/load'
+import { loadTeams } from '../chat/teams/load'
 
 export function appLoad() {
   return (dispatch, getState) => {

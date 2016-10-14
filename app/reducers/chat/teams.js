@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
 import { omit } from 'lodash'
-import { TEAM_LOAD, TEAM_LOAD_SUCCESS } from 'actions/team/load'
+import { TEAM_LOAD, TEAM_LOAD_SUCCESS } from 'actions/chat/team/load'
 
 function loaded(state = {}, { type, payload }) {
   switch (type) {

@@ -1,6 +1,6 @@
-import { MESSAGES_LOAD, MESSAGES_LOAD_SUCCESS, MESSAGES_LOAD_FAIL } from 'actions/messages'
-import { MESSAGE_ADD } from 'actions/message/add'
-import { MESSAGE_SEND_SUCCESS } from 'actions/message/send'
+import { MESSAGES_LOAD, MESSAGES_LOAD_SUCCESS, MESSAGES_LOAD_FAIL } from 'actions/chat/messages'
+import { MESSAGE_ADD } from 'actions/chat/message/add'
+import { MESSAGE_SEND_SUCCESS } from 'actions/chat/message/send'
 import { update, get, findIndex } from 'lodash'
 
 const DEFAULT_STATE = {
