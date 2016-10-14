@@ -5,6 +5,7 @@ import { autobind, throttle } from 'core-decorators'
 import raf from 'raf'
 import { connect } from 'react-redux'
 import Message from './message'
+import { loadMoreChannelOrDMMessages } from 'actions/chat/messages'
 import { chatScrollChanged } from 'actions/chat/scroll'
 import styles from 'styles/partials/chat/messages.scss'
 
@@ -15,25 +16,26 @@ function easeInOutCubic(currentIteration, startValue, changeInValue, totalIterat
   return changeInValue / 2 * (Math.pow(currentIteration - 2, 3) + 2) + startValue
 }
 
+const cellSizeCache = new CellSizeCache({
+  uniformRowHeight: false,
+  uniformColumnWidth: true
+})
+
 function mapStateToProps({ chat: { messages: allMessages, scroll } }, { team, channelorDMID }) {
   const { messages = [], isLoading = true } = get(allMessages, `${team}.${channelorDMID}`, {})
   const scrollTop = get(scroll, `${team}.${channelorDMID}`, 0)
   return { messages: messages.length, isLoading, scrollTop }
 }
 
-const cellSizeCache = new CellSizeCache({
-  uniformRowHeight: false,
-  uniformColumnWidth: true
-})
-
-@connect(mapStateToProps, { chatScrollChanged })
+@connect(mapStateToProps, { loadMoreChannelOrDMMessages, chatScrollChanged })
 export default class Messages extends Component {
   static propTypes = {
     scrollTop: PropTypes.number,
     team: PropTypes.string.isRequired,
     channelorDMID: PropTypes.string.isRequired,
     messages: PropTypes.number,
-    chatScrollChanged: PropTypes.func.isRequired
+    chatScrollChanged: PropTypes.func.isRequired,
+    loadMoreChannelOrDMMessages: PropTypes.func.isRequired
   }
 
   static childContextTypes = {
@@ -49,32 +51,50 @@ export default class Messages extends Component {
   }
 
   componentWillUpdate({ team: newTeam, channelorDMID: newChannelorDMID, messages: newMessages }) {
-    if(newTeam !== this.props.team || this.props.channelorDMID !== newChannelorDMID) {
-      this._hasScrolled = false
-      this._originalScrollPos = null
+    const { channelorDMID, team, messages, scrollTop } = this.props
+    if(newTeam !== team || channelorDMID !== newChannelorDMID) {
+      this._resetInternals()
+    } else if(
+      Math.abs(messages - newMessages) > 10
+      && newTeam === team
+      && newChannelorDMID === channelorDMID
+      && this._hasScrolled
+    ) {
+      const { scrollableHeight, _list } = this
+      this._loadedNewMessages = scrollableHeight
       cellSizeCache.clearAllRowHeights()
+      _list.measureAllRows()
     }
 
+    const { _scrollTop, scrollableHeight, _loadedNewMessages } = this
     if(
-      newMessages !== this.props.messages
-      && this._scrollTop && this.props.scrollTop
-      && this.scrollableHeight - this._scrollTop < 20
+      newMessages !== messages
+      && _scrollTop && scrollTop
+      && scrollableHeight - _scrollTop < 20
+      && !_loadedNewMessages
     ) {
       this._scrolling = true
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     if(!this._hasScrolled && this.props.messages) {
       this._hasScrolled = true
       if(!this.props.scrollTop) {
         this._originalScrollPos = this._list.Grid._scrollingContainer.scrollHeight
-        this.props.chatScrollChanged(this._originalScrollPos)
+        this._chatScrollChanged(this._originalScrollPos)
       }
     }
 
     if(!this._scrollTop) {
       this._scrollTop = this.props.scrollTop
+    }
+
+    if(this._loadedNewMessages) {
+      const oldPos = this.scrollableHeight - this._loadedNewMessages
+      this._list.Grid._scrollingContainer.scrollTop = oldPos
+      this._chatScrollChanged(oldPos)
+      this._loadedNewMessages = false
     }
 
     if(this._scrolling) {
@@ -87,6 +107,14 @@ export default class Messages extends Component {
     window.removeEventListener('resize', this._clearAllRowHeights)
   }
 
+  _resetInternals() {
+    this._originalScrollPos = null
+    this._loadedNewMessages = false
+    this._scrolling = false
+    this._hasScrolled = false
+    cellSizeCache.clearAllRowHeights()
+  }
+
   @autobind
   @throttle(20)
   _clearAllRowHeights() {
@@ -94,6 +122,12 @@ export default class Messages extends Component {
     this._list.measureAllRows()
     this._list.forceUpdateGrid()
     console.log('re-measured everything')
+  }
+
+  @autobind
+  @throttle(10)
+  _chatScrollChanged(val){
+    this.props.chatScrollChanged(val)
   }
 
   get scrollableHeight() {
@@ -126,7 +160,7 @@ export default class Messages extends Component {
       )
     } else {
       this._scrolling = false
-      this.props.chatScrollChanged(this._scrollTop)
+      this._chatScrollChanged(this._scrollTop)
     }
   }
 
@@ -140,8 +174,14 @@ export default class Messages extends Component {
   @autobind
   _onScroll({ scrollTop }) {
     this._scrollTop = scrollTop
-    if(!this._scrolling && this._hasScrolled && scrollTop !== this.props.scrollTop && scrollTop !== 0) {
-      this.props.chatScrollChanged(scrollTop)
+    const { _hasScrolled } = this
+
+    if(!this._scrolling && _hasScrolled && scrollTop !== this.props.scrollTop && scrollTop !== 0) {
+      this._chatScrollChanged(scrollTop)
+    }
+
+    if(_hasScrolled && scrollTop < 20) {
+      this.props.loadMoreChannelOrDMMessages()
     }
   }
 

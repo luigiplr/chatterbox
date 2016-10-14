@@ -4,12 +4,22 @@ export const MESSAGES_LOAD_SUCCESS = 'MESSAGES_LOAD_SUCCESS'
 export const MESSAGES_LOAD_FAIL = 'MESSAGES_LOAD_FAIL'
 
 
-export function loadChannelOrDMMessages(team, id, options) {
+export function loadMoreChannelOrDMMessages() {
+  return (dispatch, getState) => {
+    const { chat: { team: { focusedTeam, focusedChannelOrDM }, messages } } = getState()
+    const channelorDMID = focusedChannelOrDM[focusedTeam]
+    const { isLoading, messages: [firstMessage] } = get(messages, `${focusedTeam}.${channelorDMID}`, {})
+    if(isLoading) return
+    dispatch(loadChannelOrDMMessages(focusedTeam, channelorDMID, { latest: firstMessage.timestamp }, true))
+  }
+}
+
+export function loadChannelOrDMMessages(team, id, options, history = false) {
   return async(dispatch, getState) => {
     dispatch({ type: MESSAGES_LOAD, payload: { team, id } })
     try {
       const messages = await global._teams[team].loadHistory(id, options)
-      dispatch({ type: MESSAGES_LOAD_SUCCESS, payload: { team, id, messages } })
+      dispatch({ type: MESSAGES_LOAD_SUCCESS, payload: { team, id, messages, history } })
     } catch (err) {
       console.error(err)
       dispatch({ type: MESSAGES_LOAD_FAIL, payload: { team, id, err } })

@@ -69,12 +69,12 @@ function addMessageToTeamChannel(state, { team, channel_or_dm_id, message }) {
   return newState
 }
 
-function addMessagesToTeamChannel(state, { team, id, messages: newMessages }) {
+function addMessagesToTeamChannel(state, { team, id, messages: newMessages, history }) {
   const newState = {...state }
   update(newState, `${team}.${id}`, ({ messages = [] } = {}) => ({
     isLoading: false,
     hasLoaded: true,
-    messages: [...messages, ...newMessages]
+    messages: history ? [...newMessages, ...messages] : [...messages, ...newMessages]
   }))
   return newState
 }
