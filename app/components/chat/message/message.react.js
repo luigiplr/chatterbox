@@ -63,6 +63,11 @@ function Info({ handle, friendlyTimestamp }){
   )
 }
 
+Info.propTypes = {
+  handle: PropTypes.string,
+  friendlyTimestamp: PropTypes.string.isRequired
+}
+
 function Aside({ firstInChain, image, images = [], friendlyTimestamp }){
   return (
     <div className={styles.aside}>
@@ -73,4 +78,11 @@ function Aside({ firstInChain, image, images = [], friendlyTimestamp }){
       )}
     </div>
   )
+}
+
+Aside.propTypes = {
+  firstInChain: PropTypes.bool.isRequired,
+  image: PropTypes.string,
+  images: PropTypes.array,
+  friendlyTimestamp: PropTypes.string.isRequired
 }
