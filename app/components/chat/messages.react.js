@@ -66,11 +66,11 @@ export default class Messages extends Component {
 
   componentDidUpdate() {
     if(!this._hasScrolled && this.props.messages) {
+      this._hasScrolled = true
       if(!this.props.scrollTop) {
         this._originalScrollPos = this._list.Grid._scrollingContainer.scrollHeight
         this.props.chatScrollChanged(this._originalScrollPos)
       }
-      this._hasScrolled = true
     }
 
     if(!this._scrollTop) {
@@ -91,7 +91,9 @@ export default class Messages extends Component {
   @throttle(20)
   _clearAllRowHeights() {
     cellSizeCache.clearAllRowHeights()
+    this._list.measureAllRows()
     this._list.forceUpdateGrid()
+    console.log('re-measured everything')
   }
 
   get scrollableHeight() {
@@ -138,7 +140,7 @@ export default class Messages extends Component {
   @autobind
   _onScroll({ scrollTop }) {
     this._scrollTop = scrollTop
-    if(!this._scrolling && this._hasScrolled && scrollTop !== this.props.scrollTop ) {
+    if(!this._scrolling && this._hasScrolled && scrollTop !== this.props.scrollTop && scrollTop !== 0) {
       this.props.chatScrollChanged(scrollTop)
     }
   }
