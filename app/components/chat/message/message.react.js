@@ -8,7 +8,13 @@ import styles from 'styles/partials/chat/message/message.scss'
 function mapStateToProps({ messages }, { team, channelorDMID, index }) {
   messages = get(messages, `${team}.${channelorDMID}.messages`)
   const message = messages[index]
-  const firstInChain = index === 0 ? true : message.user !== get(messages[index-1], 'user', message.user)
+  let firstInChain = index === 0
+  if (!firstInChain) {
+    const nextMessage = messages[index-1]
+    const currentUser = get(message, 'userProfile.id') || message.user
+    const lastUser = get(nextMessage, 'user') || get(nextMessage, 'userProfile.id') || currentUser
+    firstInChain = lastUser !== currentUser
+  }
   return { firstInChain, ...message }
 }
 
@@ -28,8 +34,8 @@ export default class Message extends Component {
   }
 
   render() {
-    const { style, firstInChain, friendlyTimestamp, text, attachments, user: userID, sendingID } = this.props
-    const user = this.context.users[userID]
+    const { style, firstInChain, userProfile, friendlyTimestamp, text, attachments, user: userID, sendingID } = this.props
+    const user = userProfile || this.context.users[userID]
     const className = classnames(styles.message_container, {[styles.firstInChain]: firstInChain}, {[styles.sending]: sendingID})
     return (
       <div className={className} style={style}>
@@ -55,7 +61,7 @@ function Info({ user, friendlyTimestamp }){
 function Aside({ firstInChain, user, friendlyTimestamp }){
   return (
     <div className={styles.aside}>
-      {firstInChain ? <div style={{backgroundImage: `url(${user.images[0]})`}} className={styles.profile_pic} /> : (
+      {firstInChain ? <div style={{backgroundImage: `url(${user.image || user.images[0]})`}} className={styles.profile_pic} /> : (
         <span className={styles.time}>
           {friendlyTimestamp}
         </span>
