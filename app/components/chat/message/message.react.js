@@ -1,5 +1,6 @@
-import React, { Component, PropTypes } from 'react'
-import { get } from 'lodash'
+import React, { Component, PureComponent, PropTypes } from 'react'
+import memoizee from 'memoizee'
+import { uniq, get, reduce, findIndex } from 'lodash'
 import { connect } from 'react-redux'
 import { autobind } from 'core-decorators'
 import classnames from 'classnames'
@@ -80,21 +81,50 @@ Info.propTypes = {
   friendlyTimestamp: PropTypes.string.isRequired
 }
 
-function Aside({ firstInChain, image, images = [], friendlyTimestamp }){
-  return (
-    <div className={styles.aside}>
-      {firstInChain ? <div style={{backgroundImage: `url(${image || images[0]})`}} className={styles.profile_pic} /> : (
-        <span className={styles.time}>
-          {friendlyTimestamp}
-        </span>
-      )}
-    </div>
-  )
+function getClosest(array, target) {
+  const tuples = array.map(val => [val, Math.abs(val - target)])
+  return reduce(tuples, (memo, val) => (memo[1] < val[1]) ? memo : val, [-1, 999])[0]
 }
 
-Aside.propTypes = {
-  firstInChain: PropTypes.bool.isRequired,
-  image: PropTypes.string,
-  images: PropTypes.array,
-  friendlyTimestamp: PropTypes.string.isRequired
+const findImageFromImages = memoizee((images, image, width) => {
+  if(image) return image
+
+  if(images.length) {
+    let widths = []
+    images.forEach(({ width }) => widths.push(+width))
+    widths = uniq(widths.filter(width => !isNaN(width)))
+    const indexOfWidth = findIndex(images, ['width', getClosest(widths, width).toString()])
+    const { url } = images[indexOfWidth] || {}
+    return url
+  }
+
+  return null
+}, { maxAge: 60000, max: 20 })
+
+@connect(({ app: { screen } } ) => ({ screen }))
+class Aside extends PureComponent {
+  static propTypes = {
+    firstInChain: PropTypes.bool.isRequired,
+    image: PropTypes.string,
+    images: PropTypes.array,
+    friendlyTimestamp: PropTypes.string.isRequired,
+    screen: PropTypes.object.isRequired
+  }
+
+  static defaultProps = {
+    images: []
+  }
+
+  render() {
+    const { firstInChain, friendlyTimestamp, images, image, screen: { width } } = this.props
+    return (
+      <div className={styles.aside}>
+        {firstInChain ? <div style={{backgroundImage: `url(${findImageFromImages(images, image, width)})`}} className={styles.profile_pic} /> : (
+          <span className={styles.time}>
+            {friendlyTimestamp}
+          </span>
+        )}
+      </div>
+    )
+  }
 }

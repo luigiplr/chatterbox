@@ -1,4 +1,5 @@
 import { filter, get, last, omitBy, isNil } from 'lodash'
+import path from 'path'
 import moment from 'moment'
 import crypto from 'crypto'
 import formatter from './formatter'
@@ -6,13 +7,21 @@ import santitizeAttachments from './attachments'
 import { addMessage } from 'actions/chat/message/add'
 import { messageEdited } from 'actions/chat/message/edit'
 
+function extractWidthFromImage(image) {
+  const { name } = path.parse(image)
+  return last(name.split('_')) + '0'
+}
+
 export function santitizeUser({ tz: timezone, id, deleted, profile, name: handle, presence }) {
   return {
     handle,
     name: get(profile, 'real_name_normalized', null),
     id,
     presence: presence === 'active' ? 'online' : 'offline',
-    images: filter(profile, (data, key) => key.includes('image')),
+    images: filter(profile, (data, key) => key.includes('image')).map(url => ({
+      url,
+      width: extractWidthFromImage(url)
+    })),
     meta: { timezone, email: get(profile, 'email') }
   }
 }

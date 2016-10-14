@@ -121,7 +121,7 @@ export default class SlackHandler {
         presence,
         name: `@${handle}`,
         handle,
-        image: last(images),
+        image: last(images).url,
         user,
         meta: { members: presence, topic: name }
       })
