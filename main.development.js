@@ -1,8 +1,8 @@
-import { app, BrowserWindow, Menu, shell } from 'electron';
+import { app, BrowserWindow, Menu, shell } from 'electron'
 
-let menu;
-let template;
-let mainWindow = null;
+let menu
+let template
+let mainWindow = null
 
 
 if (process.env.NODE_ENV === 'development') {
@@ -11,8 +11,8 @@ if (process.env.NODE_ENV === 'development') {
 
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
-});
+  if (process.platform !== 'darwin') app.quit()
+})
 
 
 const installExtensions = async() => {
@@ -30,40 +30,40 @@ const installExtensions = async() => {
       } catch (e) {} // eslint-disable-line
     }
   }
-};
+}
 
 app.on('ready', async() => {
-  await installExtensions();
+  await installExtensions()
 
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
     height: 728
-  });
+  })
 
   mainWindow.loadURL(`file://${__dirname}/app/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
-    mainWindow.show();
-    mainWindow.focus();
-  });
+    mainWindow.show()
+    mainWindow.focus()
+  })
 
   mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
+    mainWindow = null
+  })
 
   if (process.env.NODE_ENV === 'development') {
-    mainWindow.openDevTools();
+    mainWindow.openDevTools()
     mainWindow.webContents.on('context-menu', (e, props) => {
-      const { x, y } = props;
+      const { x, y } = props
 
       Menu.buildFromTemplate([{
         label: 'Inspect element',
         click() {
-          mainWindow.inspectElement(x, y);
+          mainWindow.inspectElement(x, y)
         }
-      }]).popup(mainWindow);
-    });
+      }]).popup(mainWindow)
+    })
   }
 
   mainWindow.setMenu(null)
