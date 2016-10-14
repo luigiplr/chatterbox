@@ -27,7 +27,8 @@ export default class Message extends Component {
     text: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
     friendlyTimestamp: PropTypes.string,
     attachments: PropTypes.array,
-    sendingID: PropTypes.string
+    sendingID: PropTypes.string,
+    edited: PropTypes.string
   }
 
   static contextTypes = {
@@ -40,14 +41,14 @@ export default class Message extends Component {
   }
 
   render() {
-    const { style, firstInChain, friendlyTimestamp, text, attachments, sendingID } = this.props
+    const { style, firstInChain, friendlyTimestamp, text, attachments, sendingID, edited } = this.props
     const { user } = this
     const className = classnames(styles.message_container, {[styles.firstInChain]: firstInChain}, {[styles.sending]: sendingID})
     return (
       <div className={className} style={style}>
         <Aside {...user} firstInChain={firstInChain} friendlyTimestamp={friendlyTimestamp} />
         <div className={styles.body}>
-          {firstInChain && <Info {...user} friendlyTimestamp={friendlyTimestamp} />}
+          {firstInChain && <Info edited={edited} {...user} friendlyTimestamp={friendlyTimestamp} />}
           {text && <div className={styles.text}>{text}</div>}
           {attachments && <Attachments attachments={attachments} />}
         </div>
@@ -56,11 +57,12 @@ export default class Message extends Component {
   }
 }
 
-function Info({ handle, friendlyTimestamp }){
+function Info({ handle, friendlyTimestamp, edited }){
   return (
     <div className={styles.info}>
       <span className={styles.user}>{handle}</span>
       <span className={styles.time}>{friendlyTimestamp}</span>
+      {edited && <span className={styles.time}>(edited)</span>}
     </div>
   )
 }

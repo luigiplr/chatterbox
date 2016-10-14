@@ -4,6 +4,7 @@ import crypto from 'crypto'
 import formatter from './formatter'
 import santitizeAttachments from './attachments'
 import { addMessage } from 'actions/chat/message/add'
+import { messageEdited } from 'actions/chat/message/edit'
 
 export function santitizeUser({ tz: timezone, id, deleted, profile, name: handle, presence }) {
   return {
@@ -18,8 +19,9 @@ export function santitizeUser({ tz: timezone, id, deleted, profile, name: handle
 
 function santitizeMessage({ user, text, ts: timestamp, user_profile: userProfile = null, attachments, edited = '', sendingID }) {
   return {
-    id: timestamp,
+    id: timestamp + user,
     ...omitBy({
+      edited,
       attachments: attachments && santitizeAttachments.bind(this)(attachments),
       sendingID,
       user,
@@ -61,12 +63,8 @@ export function parseMessage(dispatch, { type, subtype, team, channel, bot_id, .
     case 'message:message_changed':
       {
         const { message, event_ts: eventTimestamp, previous_message: { ts: previousMessageTimestamp } } = messageData
-        const msg = {
-          channel,
-          message: santitizeMessage.bind(this)({...message, edited: eventTimestamp }),
-          edit: { eventTimestamp },
-          previousMessageTimestamp
-        }
+        const msg = omitBy({ isBot, ...santitizeMessage.bind(this)({ ...message, edited: eventTimestamp }) }, isNil)
+        if (organic) dispatch(messageEdited(this._team.id, channel, msg, previousMessageTimestamp + msg.user))
         return msg
       }
     default:

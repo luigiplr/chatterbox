@@ -1,6 +1,7 @@
 import { MESSAGES_LOAD, MESSAGES_LOAD_SUCCESS, MESSAGES_LOAD_FAIL } from 'actions/chat/messages'
 import { MESSAGE_ADD } from 'actions/chat/message/add'
 import { MESSAGE_SEND_SUCCESS } from 'actions/chat/message/send'
+import { MESSAGE_EDITED } from 'actions/chat/message/edit'
 import { update, get, findIndex } from 'lodash'
 
 const DEFAULT_STATE = {
@@ -26,6 +27,8 @@ export default function messages(state = DEFAULT_STATE, { type, payload }) {
   switch (type) {
     case MESSAGE_ADD:
       return addMessageToTeamChannel(state, payload)
+    case MESSAGE_EDITED:
+      return editMessage(state, payload)
     case MESSAGE_SEND_SUCCESS:
       return markMessageAsSent(state, payload)
     case MESSAGES_LOAD:
@@ -37,6 +40,15 @@ export default function messages(state = DEFAULT_STATE, { type, payload }) {
     default:
       return state
   }
+}
+
+function editMessage(state, { team, channelorDMID, message, originalID }) {
+  const newState = { ...state }
+  update(newState, `${team}.${channelorDMID}`, ({ messages = [], ...data } = {}) => {
+    messages[findIndex(messages, ['id', originalID])] = message
+    return { messages, ...data }
+  })
+  return newState
 }
 
 function markMessageAsSent(state, { team, id, sendingID, message }){
