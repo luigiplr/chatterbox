@@ -16,11 +16,11 @@ export function santitizeUser({ tz: timezone, id, deleted, profile, name: handle
   }
 }
 
-function santitizeMessage({ user, text, ts: timestamp, user_profile: userProfile = null, attachments = [], edited = '', sendingID }) {
+function santitizeMessage({ user, text, ts: timestamp, user_profile: userProfile = null, attachments, edited = '', sendingID }) {
   return {
     id: timestamp,
     ...omitBy({
-      attachments: santitizeAttachments.bind(this)(attachments),
+      attachments: attachments && santitizeAttachments.bind(this)(attachments),
       sendingID,
       user,
       text: text && formatter.bind(this)(text),

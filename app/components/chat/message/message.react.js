@@ -49,7 +49,7 @@ export default class Message extends Component {
         <div className={styles.body}>
           {firstInChain && <Info {...user} friendlyTimestamp={friendlyTimestamp} />}
           {text && <div className={styles.text}>{text}</div>}
-          <Attachments attachments={attachments} />
+          {attachments && <Attachments attachments={attachments} />}
         </div>
       </div>
     )

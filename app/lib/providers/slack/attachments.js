@@ -2,7 +2,7 @@ import formatter from './formatter'
 import { map } from 'lodash'
 
 export default function santitizeAttachments(attachments) {
-  if(!attachments || !attachments.length) return []
+  if(!attachments || !attachments.length) return null
   return attachments.map((rawAttachment) => {
     const { title, title_link, text, pretext, color, fields, mrkdwn_in = [], ...attachment } = rawAttachment
     return {
