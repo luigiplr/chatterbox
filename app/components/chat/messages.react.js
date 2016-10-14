@@ -36,6 +36,10 @@ export default class Messages extends Component {
     chatScrollChanged: PropTypes.func.isRequired
   }
 
+  componentDidMount() {
+    window.addEventListener('resize', this._clearAllRowHeights, { passive: true })
+  }
+
   componentWillUpdate({ team: newTeam, channelorDMID: newChannelorDMID, messages: newMessages }) {
     if(newTeam !== this.props.team || this.props.channelorDMID !== newChannelorDMID) {
       this._hasScrolled = false
@@ -71,6 +75,12 @@ export default class Messages extends Component {
   }
 
   componentWillUnmount() {
+    cellSizeCache.clearAllRowHeights()
+    window.removeEventListener('resize', this._clearAllRowHeights)
+  }
+
+  @autobind
+  _clearAllRowHeights() {
     cellSizeCache.clearAllRowHeights()
   }
 
