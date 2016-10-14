@@ -56,9 +56,7 @@ export default class Messages extends Component {
     if(!this._hasScrolled && this.props.messages) {
       if(!this.props.scrollTop) {
         this._originalScrollPos = this._list.Grid._scrollingContainer.scrollHeight
-        raf(() =>
-          this.props.chatScrollChanged(this._originalScrollPos)
-        )
+        this.props.chatScrollChanged(this._originalScrollPos)
       }
       this._hasScrolled = true
     }
