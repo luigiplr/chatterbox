@@ -61,7 +61,7 @@ export class User extends PureComponent {
   render() {
     const user = this.context.users[this.props.id]
     return (
-      <span className={classnames(styles.user)}>
+      <span className={styles.user}>
         @{user.handle}
       </span>
     )
