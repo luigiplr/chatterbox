@@ -1,18 +1,17 @@
-import { readJsonSync, outputJsonSync, ensureDirSync } from 'fs-extra'
+import { readJsonSync, outputJsonSync, outputJson } from 'fs-extra'
 import { join } from 'path'
-import { remote } from 'electron'
-
-const userData = remote.app.getPath('userData')
-ensureDirSync(userData)
 
 export function saveTeams(teams) {
-  outputJsonSync(join(userData, 'teams.json'), teams)
+  outputJsonSync(join(global._userDataPath, 'teams.json'), teams)
 }
 
 export function getTeams() {
+  const teamsJSONPath = join(global._userDataPath, 'teams.json')
   try {
-    return readJsonSync(join(userData, 'teams.json'), { throws: false })
+    return readJsonSync(teamsJSONPath, { throws: false })
   } catch (err) {
+    console.info('No valid teams.json detected, creating one.')
+    outputJson(settingsJSONPath, {})
     return {}
   }
 }

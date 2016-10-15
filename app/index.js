@@ -3,11 +3,13 @@ import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import { Router, hashHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
+import { getUserDataPath } from 'lib/settings'
 import routes from './routes'
 import configureStore from './store/configureStore'
 import 'react-virtualized/styles.css'
 import 'styles/vender/normalize.css'
 
+global._userDataPath = getUserDataPath()
 global._teams = {}
 const store = configureStore()
 const history = syncHistoryWithStore(hashHistory, store)
