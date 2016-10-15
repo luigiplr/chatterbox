@@ -188,8 +188,11 @@ export default class Messages extends Component {
   @autobind
   _recomputeRowHeight(index) {
     cellSizeCache.clearRowHeight(index)
-    this._list.recomputeRowHeights(index)
-    this._list.forceUpdateGrid()
+    const { _list } = this
+    if(_list) {
+      _list.recomputeRowHeights(index)
+      _list.forceUpdateGrid()
+    }
   }
 
   render() {

@@ -22,7 +22,7 @@ export function loadChannelOrDMMessages(team, id, options, history = false) {
       dispatch({ type: MESSAGES_LOAD_SUCCESS, payload: { team, id, messages, history } })
     } catch (err) {
       console.error(err)
-      dispatch({ type: MESSAGES_LOAD_FAIL, payload: { team, id, err } })
+      dispatch({ type: MESSAGES_LOAD_FAIL, payload: { team, id, messages: [], err, history } })
     }
   }
 }

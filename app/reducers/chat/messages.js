@@ -69,7 +69,7 @@ function addMessageToTeamChannel(state, { team, channel_or_dm_id, message }) {
   return newState
 }
 
-function addMessagesToTeamChannel(state, { team, id, messages: newMessages, history }) {
+function addMessagesToTeamChannel(state, { team, id, messages: newMessages, hasMore, history }) {
   const newState = {...state }
   update(newState, `${team}.${id}`, ({ messages = [] } = {}) => ({
     isLoading: false,
@@ -79,12 +79,13 @@ function addMessagesToTeamChannel(state, { team, id, messages: newMessages, hist
   return newState
 }
 
-function setChannelOrDMLoadingState(state, { team, id }, loadingState) {
+function setChannelOrDMLoadingState(state, { team, id, err, hasMore }, loadingState) {
   const newState = {...state }
   update(newState, `${team}.${id}`, ({ isLoading, hasLoaded = false, messages = [] } = {}) => ({
     isLoading: loadingState,
-    hasLoaded,
-    messages
+    hasLoaded: err ? true : hasLoaded,
+    messages,
+    hasMore
   }))
   return newState
 }
