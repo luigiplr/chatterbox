@@ -19,10 +19,10 @@ export function readSettings() {
   }
 }
 
-export function getUserDataPath() {
+export function loadUserDataPath() {
   const userData = defaultUserDataPath
   ensureDirSync(userData)
-  return userData
+  global._userDataPath = userData
 }
 
 export function setUserDataPath(newPath) {
