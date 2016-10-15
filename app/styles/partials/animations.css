@@ -1,0 +1,17 @@
+.messages-fade-enter {
+  opacity: 0.01;
+}
+
+.messages-fade-enter.messages-fade-active {
+  opacity: 1;
+  transition: opacity 200ms ease-in;
+}
+
+.messages-fade-leave {
+  opacity: 1;
+}
+
+.messages-fade-leave.messages-fade-active {
+  opacity: 0.01;
+  transition: opacity 50ms ease-out;
+}

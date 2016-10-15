@@ -49,7 +49,6 @@ export default class Info extends Component {
             {dms.map(dm => <DirectMessage key={dm.id} {...dm} />)}
           </div>
         </div>
-
       </div>
     )
   }

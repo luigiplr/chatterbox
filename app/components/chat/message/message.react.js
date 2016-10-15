@@ -53,6 +53,7 @@ export default class Message extends Component {
     const { style, firstInChain, friendlyTimestamp, text, attachments, sendingID, edited } = this.props
     const { user } = this
     const className = classnames(styles.message_container, {[styles.firstInChain]: firstInChain}, {[styles.sending]: sendingID})
+    if(edited) console.log(edited)
     return (
       <div className={className} style={style}>
         <Aside {...user} firstInChain={firstInChain} friendlyTimestamp={friendlyTimestamp} />

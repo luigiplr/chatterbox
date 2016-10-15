@@ -4,6 +4,11 @@
   margin-right: 2px;
   flex: 1;
   cursor: auto;
+  display: flex;
+
+  & > span {
+    flex: 1;
+  }
 
   .scroller {
     outline: none;
@@ -19,6 +24,5 @@
     &::-webkit-scrollbar {
       width: 10px;
     }
-
   }
 }

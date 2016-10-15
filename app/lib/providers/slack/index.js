@@ -119,7 +119,7 @@ export default class SlackHandler {
         isOpen,
         id,
         presence,
-        name: `@${handle}`,
+        name: handle,
         handle,
         image: last(images).url,
         user,

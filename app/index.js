@@ -8,6 +8,7 @@ import routes from './routes'
 import configureStore from './store/configureStore'
 import 'react-virtualized/styles.css'
 import 'styles/vender/normalize.css'
+import 'styles/partials/animations.css'
 
 loadUserDataPath()
 global._teams = {}

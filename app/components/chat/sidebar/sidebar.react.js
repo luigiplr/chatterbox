@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import { connect } from 'react-redux'
 import { get } from 'lodash'
 import Teams from './teams'
@@ -21,7 +22,7 @@ export default class Sidebar extends Component {
     return (
       <div className={styles.sidebar_container}>
         <Teams teams={Object.keys(teams)} selectedImage={get(teams, `${team}.team.image`)} />
-        {team && <Info id={team} />}
+        {team && <Info key={team} id={team} />}
       </div>
     )
   }

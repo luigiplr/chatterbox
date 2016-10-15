@@ -2,22 +2,29 @@ import { MESSAGES_LOAD, MESSAGES_LOAD_SUCCESS, MESSAGES_LOAD_FAIL } from 'action
 import { MESSAGE_ADD } from 'actions/chat/message/add'
 import { MESSAGE_SEND_SUCCESS } from 'actions/chat/message/send'
 import { MESSAGE_EDITED } from 'actions/chat/message/edit'
-import { update, get, findIndex } from 'lodash'
+import { MESSAGE_FOCUSED_INDEX_CHANGE } from 'actions/chat/message/focused'
+import {
+  addMessageToTeamChannel, editMessage, markMessageAsSent, markMessageAsFocused,
+  setChannelOrDMLoadingState, addMessagesToTeamChannel
+} from './helpers'
 
 const DEFAULT_STATE = {
   errors: {}
+}
+
+export const DEFAULT_CHANNEL_OR_DM_STATE = {
+  messages: [],
+  focusedMessage: null,
+  isLoading: true,
+  hasLoaded: false,
+  hasMore: true
 }
 
 /*
 
   messages: {
     [teamID]: {
-      [channel_or_id]: {
-        messages: {},
-        isLoading: Boolean,
-        hasLoaded: Boolean,
-        hasMore: Boolean
-      }
+      [channel_or_id]: DEFAULT_CHANNEL_OR_DM_STATE
     }
   }
 
@@ -31,6 +38,9 @@ export default function messages(state = DEFAULT_STATE, { type, payload }) {
       return editMessage(state, payload)
     case MESSAGE_SEND_SUCCESS:
       return markMessageAsSent(state, payload)
+    case MESSAGE_FOCUSED_INDEX_CHANGE:
+      return markMessageAsFocused(state, payload)
+
     case MESSAGES_LOAD:
       return setChannelOrDMLoadingState(state, payload, true)
     case MESSAGES_LOAD_SUCCESS:
@@ -40,52 +50,4 @@ export default function messages(state = DEFAULT_STATE, { type, payload }) {
     default:
       return state
   }
-}
-
-function editMessage(state, { team, channelorDMID, message, originalID }) {
-  const newState = { ...state }
-  update(newState, `${team}.${channelorDMID}`, ({ messages = [], ...data } = {}) => {
-    messages[findIndex(messages, ['id', originalID])] = message
-    return { messages, ...data }
-  })
-  return newState
-}
-
-function markMessageAsSent(state, { team, id, sendingID, message }){
-  const newState = { ...state }
-  update(newState, `${team}.${id}`, ({ messages = [], ...data } = {}) => {
-    messages[findIndex(messages, ['sendingID', sendingID])] = message
-    return { messages, ...data }
-  })
-  return newState
-}
-
-function addMessageToTeamChannel(state, { team, channel_or_dm_id, message }) {
-  const newState = { ...state }
-  update(newState, `${team}.${channel_or_dm_id}`, ({ messages = [], ...data } = {}) => ({
-    messages: [...messages, message],
-    ...data
-  }))
-  return newState
-}
-
-function addMessagesToTeamChannel(state, { team, id, messages: newMessages, hasMore, history }) {
-  const newState = {...state }
-  update(newState, `${team}.${id}`, ({ messages = [] } = {}) => ({
-    isLoading: false,
-    hasLoaded: true,
-    messages: history ? [...newMessages, ...messages] : [...messages, ...newMessages]
-  }))
-  return newState
-}
-
-function setChannelOrDMLoadingState(state, { team, id, err, hasMore }, loadingState) {
-  const newState = {...state }
-  update(newState, `${team}.${id}`, ({ isLoading, hasLoaded = false, messages = [] } = {}) => ({
-    isLoading: loadingState,
-    hasLoaded: err ? true : hasLoaded,
-    messages,
-    hasMore
-  }))
-  return newState
 }
