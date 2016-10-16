@@ -88,11 +88,10 @@ export default class Messages extends Component {
     }
 
     if(
-      !this._scrollingToBottom
+      this._shouldScrollBottom
       && nextProps.team === team
       && nextProps.channelorDMID === channelorDMID
       && nextProps.messages !== messages
-      && messages - this._stopIndex < 10
     ) {
       this._scrollingToBottom = true
     }
@@ -127,6 +126,13 @@ export default class Messages extends Component {
     } catch (err) {
       raf(this._scrollDown)
     }
+  }
+
+  get _shouldScrollBottom() {
+    return (
+      !this._scrollingToBottom
+      && this.props.messages - this._stopIndex < 10
+    )
   }
 
   _resetInternals() {
@@ -184,6 +190,10 @@ export default class Messages extends Component {
     if(_list) {
       _list.recomputeRowHeights(index)
       _list.forceUpdateGrid()
+      if (this._shouldScrollBottom) {
+        this._scrolling = true
+        this._scrollDown()
+      }
     }
   }
 
