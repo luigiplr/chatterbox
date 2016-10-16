@@ -1,4 +1,4 @@
-import { forEach, pickBy, get, pick, last } from 'lodash'
+import { forEach, pickBy, get, pick, last, map } from 'lodash'
 import { WebClient, RtmClient, MemoryDataStore, CLIENT_EVENTS, RTM_EVENTS } from '@slack/client'
 import { autobind } from 'core-decorators'
 import moment from 'moment'
@@ -6,7 +6,7 @@ import { santitizeUser, parseMessage } from './helpers'
 import { teamLoad, teamLoadSuccess, teamLoadFail } from 'actions/chat/team/load'
 import { addMessage } from 'actions/chat/message/add'
 import formatter from './formatter'
-import emojiRegex from './emoji'
+import { onEmojiChange, setEmojis, updateEmojiRegex } from './emoji'
 
 export default class SlackHandler {
   constructor({ auth: { token }, id }, dispatch) {
@@ -53,6 +53,7 @@ export default class SlackHandler {
       this._channels = this._loadChannles()
       this._dms = this._loadDirectMessages()
       this._team = this._loadTeam()
+      this._loadCustomEmoji()
 
       dispatch(teamLoadSuccess({
         channels: this._channels,
@@ -65,6 +66,11 @@ export default class SlackHandler {
 
     this._slack.on(RTM_EVENTS.MESSAGE, m => this._parseMessage(m, true))
 
+    this._slack.on(RTM_EVENTS.EMOJI_CHANGED, data => {
+      if (!data.subtype) return this._loadCustomEmoji()
+      onEmojiChange.bind(this)(data)
+    })
+
     this._slack.start()
   }
 
@@ -74,6 +80,17 @@ export default class SlackHandler {
 
   _canSend = false
   _connected = false
+
+  _emojiRegex = updateEmojiRegex()
+
+  _loadCustomEmoji() {
+    this._slack._webClient.emoji.list().then(data => {
+      if (data.ok && data.emoji) {
+        setEmojis.bind(this)(data.emoji)
+      } else console.error("Error fetching custom emoji", data)
+    })
+  }
+
 
   loadHistory(channel_or_dm_id, { count = 100, latest = null, oldest = null, inclusive = 0 } = {}) {
     return new Promise((resolve, reject) => {
@@ -86,8 +103,6 @@ export default class SlackHandler {
       })
     })
   }
-
-  _emojiRegex = emojiRegex()
 
   /* Start of load methods */
 

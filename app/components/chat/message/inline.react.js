@@ -6,8 +6,8 @@ import styles from 'styles/partials/chat/message/inline.scss'
 
 const buildImageUrl = (hex, ext = 'png') => `http://cdn.jsdelivr.net/emojione/assets/${ext}/${hex.toUpperCase()}.${ext}`
 
-export function Emoji({ name, hex }) {
-  return <img className={styles.emoji} title={name} src={buildImageUrl(hex)} />
+export function Emoji({ name, hex, custom }) {
+  return <img className={styles.emoji} title={name} src={custom ? hex : buildImageUrl(hex)} />
 }
 
 Emoji.propTypes = {
