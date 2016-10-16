@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { List, AutoSizer, CellMeasurer, defaultCellMeasurerCellSizeCache as CellSizeCache } from 'react-virtualized'
 import { get } from 'lodash'
-import { autobind, throttle } from 'core-decorators'
 import raf from 'raf'
 import { connect } from 'react-redux'
 import Message from './message'
@@ -66,6 +65,7 @@ export default class Messages extends Component {
     const { channelorDMID, team } = this.props
 
     if(nextProps.team !== team || channelorDMID !== nextProps.channelorDMID) {
+      this.props.changeFocusedMessageIndex(team, channelorDMID, this._stopIndex)
       this._resetInternals()
       return
     }
@@ -110,6 +110,8 @@ export default class Messages extends Component {
   }
 
   componentWillUnmount() {
+    const { channelorDMID, team, changeFocusedMessageIndex } = this.props
+    changeFocusedMessageIndex(team, channelorDMID, this._stopIndex)
     cellSizeCache.clearAllRowHeights()
   }
 
@@ -135,12 +137,6 @@ export default class Messages extends Component {
     this._hasRenderedInitial = false
     this._scrollingToBottom = false
     cellSizeCache.clearAllRowHeights()
-  }
-
-  @autobind
-  _chatMessageIndexChanged(index){
-    const { team, channelorDMID, changeFocusedMessageIndex } = this.props
-    changeFocusedMessageIndex(team, channelorDMID, index)
   }
 
   _handleContainerScroll({ target }) {
@@ -202,13 +198,10 @@ export default class Messages extends Component {
     this._startIndex = startIndex
     this._stopIndex = stopIndex
 
-    if(this._loadedNewMessages) return
-
     if(!this._hasRenderedInitial) {
       this._hasRenderedInitial = true
       return
     }
-    this._chatMessageIndexChanged(stopIndex)
   }
 
   render() {
