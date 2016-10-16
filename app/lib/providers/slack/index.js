@@ -1,4 +1,4 @@
-import { forEach, pickBy, get, pick, last, map } from 'lodash'
+import { forEach, pickBy, get, pick, last } from 'lodash'
 import { WebClient, RtmClient, MemoryDataStore, CLIENT_EVENTS, RTM_EVENTS } from '@slack/client'
 import { autobind } from 'core-decorators'
 import moment from 'moment'
