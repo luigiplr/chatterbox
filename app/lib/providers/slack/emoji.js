@@ -8,7 +8,8 @@ const _getKey = key => key.match(/^:.*:$/) ? key.replace(/^:|:$/g, '') : key
 
 export function matchEmoji(match, messageReplacementDict) {
   const key = _getKey(match)
-  const hex = this._emojiRegex.dict[key]
+  const hex = this._emojiRegex.hex[key]
+  // const url = this._emojiRegex.url[key]
   let parsed = match
   if (hex) {
     const replacement = uuid()
@@ -21,6 +22,7 @@ export function matchEmoji(match, messageReplacementDict) {
 export default function emojiRegex(customEmoji) {
   return {
     delimiter: new RegExp(`(:(?:${getEscapedKeys(annotations)}):)`, 'g'),
-    dict: annotations
+    hex: annotations,
+    // url
   }
 }
