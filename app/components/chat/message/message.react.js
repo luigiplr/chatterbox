@@ -29,7 +29,7 @@ export default class Message extends Component {
     friendlyTimestamp: PropTypes.string,
     attachments: PropTypes.array,
     sendingID: PropTypes.string,
-    edited: PropTypes.string,
+    edited: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
     index: PropTypes.number.isRequired,
     preRenderingMeasure: PropTypes.bool.isRequired
   }
@@ -43,6 +43,10 @@ export default class Message extends Component {
     preRenderingMeasure: PropTypes.bool.isRequired
   }
 
+  state = {
+    didSend: false
+  }
+
   getChildContext() {
     const { preRenderingMeasure } = this.props
     return { preRenderingMeasure }
@@ -52,17 +56,27 @@ export default class Message extends Component {
     const { props: { user, userProfile }, context: { users } } = this
     return userProfile || users[user] || {}
   }
-
-  componentDidUpdate({ edited: prevEdited }) {
+  
+  componentDidUpdate({ edited: prevEdited, sendingID: PrevSendingID }) {
     if (prevEdited !== this.props.edited) {
       this.context.recomputeRowHeight(this.props.index)
+    }
+    if(PrevSendingID && this.props.sendingID !== PrevSendingID) {
+      this.setState({ didSend: true })
     }
   }
 
   render() {
     const { style, firstInChain, friendlyTimestamp, text, attachments, sendingID, edited } = this.props
+    const { didSend } = this.state
     const { user } = this
-    const className = classnames(styles.message_container, {[styles.firstInChain]: firstInChain}, {[styles.sending]: sendingID})
+    const className = classnames(
+      styles.message_container,
+      {[styles.firstInChain]: firstInChain},
+      {[styles.sending]: sendingID},
+      {[styles.didSend]: didSend}
+    )
+
     if(edited) console.log(edited)
     return (
       <div className={className} style={style}>

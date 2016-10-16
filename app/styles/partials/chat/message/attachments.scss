@@ -1,3 +1,5 @@
+@import '../../../modules/keyframes';
+
 .attachments_container {
   display: flex;
 
@@ -94,15 +96,6 @@
       width: 47%;
       display: inline-block;
     }
-  }
-}
-@keyframes fadein {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
   }
 }
 
