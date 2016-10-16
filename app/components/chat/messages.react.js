@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { List, AutoSizer, CellMeasurer, defaultCellMeasurerCellSizeCache as CellSizeCache } from 'react-virtualized'
 import { get } from 'lodash'
+import { autobind } from 'core-decorators'
 import raf from 'raf'
 import { connect } from 'react-redux'
 import Message from './message'
