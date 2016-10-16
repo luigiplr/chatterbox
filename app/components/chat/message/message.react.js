@@ -1,4 +1,5 @@
 import React, { Component, PureComponent, PropTypes } from 'react'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import memoizee from 'memoizee'
 import { uniq, get, reduce, findIndex } from 'lodash'
 import { connect } from 'react-redux'
@@ -43,10 +44,6 @@ export default class Message extends Component {
     preRenderingMeasure: PropTypes.bool.isRequired
   }
 
-  state = {
-    didSend: false
-  }
-
   getChildContext() {
     const { preRenderingMeasure } = this.props
     return { preRenderingMeasure }
@@ -56,39 +53,48 @@ export default class Message extends Component {
     const { props: { user, userProfile }, context: { users } } = this
     return userProfile || users[user] || {}
   }
-  
-  componentDidUpdate({ edited: prevEdited, sendingID: PrevSendingID }) {
+
+  componentDidUpdate({ edited: prevEdited }) {
     if (prevEdited !== this.props.edited) {
       this.context.recomputeRowHeight(this.props.index)
-    }
-    if(PrevSendingID && this.props.sendingID !== PrevSendingID) {
-      this.setState({ didSend: true })
     }
   }
 
   render() {
-    const { style, firstInChain, friendlyTimestamp, text, attachments, sendingID, edited } = this.props
-    const { didSend } = this.state
+    const { style, firstInChain, friendlyTimestamp, text, attachments, sendingID, edited, index, preRenderingMeasure } = this.props
     const { user } = this
     const className = classnames(
       styles.message_container,
       {[styles.firstInChain]: firstInChain},
-      {[styles.sending]: sendingID},
-      {[styles.didSend]: didSend}
+      {[styles.sending]: sendingID}
     )
 
     if(edited) console.log(edited)
+
     return (
-      <div className={className} style={style}>
-        <Aside {...user} firstInChain={firstInChain} friendlyTimestamp={friendlyTimestamp} />
-        <div className={styles.body}>
-          {firstInChain && <Info edited={edited} {...user} friendlyTimestamp={friendlyTimestamp} />}
-          {text && <div className={styles.text}>{text}</div>}
-          {attachments && <Attachments attachments={attachments} />}
+      <ReactCSSTransitionGroupWrapper>
+        <div className={className} style={style} key={index}>
+          <Aside {...user} firstInChain={firstInChain} friendlyTimestamp={friendlyTimestamp} />
+          <div className={styles.body}>
+            {firstInChain && <Info edited={edited} {...user} friendlyTimestamp={friendlyTimestamp} />}
+            {text && <div className={styles.text}>{text}</div>}
+            {attachments && <Attachments attachments={attachments} />}
+          </div>
         </div>
-      </div>
+      </ReactCSSTransitionGroupWrapper>
     )
   }
+}
+
+function ReactCSSTransitionGroupWrapper({ children }, { preRenderingMeasure }) {
+  return preRenderingMeasure ? children : (
+    <ReactCSSTransitionGroup
+      transitionName='message'
+      transitionEnterTimeout={80}
+      transitionLeave={false}>
+      {children}
+    </ReactCSSTransitionGroup>
+  )
 }
 
 function Info({ handle, friendlyTimestamp, edited }){
