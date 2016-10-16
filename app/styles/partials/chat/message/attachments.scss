@@ -96,6 +96,15 @@
     }
   }
 }
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
 
 .bigImage {
   display: flex;
@@ -109,6 +118,11 @@
     flex: 1;
 
     & > img {
+      opacity: 0;
+      animation-name: fadein;
+      animation-duration: 50ms;
+      animation-fill-mode: forwards;
+      animation-timing-function: ease-in;
       object-fit: contain;
       height: 100%;
     }
