@@ -25,7 +25,6 @@
   .body {
     display: inline-block;
     flex: 1;
-    font-size: 15px;
     text-rendering: optimizeLegibility;
 
     .info {
@@ -56,8 +55,9 @@
     .text {
       margin: 0;
       display: flex;
-      line-height: 20px;
+      line-height: var(--chat-message-line-height);
       white-space: pre-wrap;
+      font-size: var(--chat-message-font-size);
       color: var(--chat-message-primary-color);
     }
   }
