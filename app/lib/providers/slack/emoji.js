@@ -4,7 +4,7 @@ import { getEscapedKeys } from './helpers'
 import { v1 as uuid } from 'node-uuid'
 import { Emoji as InlineEmoji } from 'components/chat/message/inline.react'
 
-const _getKey = key => key.match(/^:.*:$/) ? key.replace(/^:|:$/, '') : key
+const _getKey = key => key.match(/^:.*:$/) ? key.replace(/^:|:$/g, '') : key
 
 export function matchEmoji(match, messageReplacementDict) {
   const key = _getKey(match)
