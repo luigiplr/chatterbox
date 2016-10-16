@@ -1,6 +1,5 @@
 .sidebar_container {
   display: inline-flex;
   width: 260px;
-  background-color: #212a3b;
-  color: #fff;
+  background-color: var(--sidebar-background-color);
 }

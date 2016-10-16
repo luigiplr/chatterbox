@@ -1,0 +1,48 @@
+.light {
+  /* Sidebar */
+
+  --sidebar-background-color: #212a3b;
+
+  //channelOrDM
+  --sidebar-channelOrDM-hover-background-color: rgba(255, 255, 255, 0.06);
+  --sidebar-channelOrDM-active-background-color: rgba(255, 255, 255, 0.12);
+  --sidebar-channelOrDM-text-primary-color: rgba(255, 255, 255, 0.58);
+  --sidebar-channelOrDM-text-primary-active-color: rgba(255, 255, 255, 0.85);
+  --sidebar-channelOrDM-text-secondary-color: rgba(255, 255, 255, 0.48);
+  --sidebar-channelOrDM-header-color: rgba(255, 255, 255, 0.5);
+  --sidebar-channelOrDM-subheader-color: rgba(255, 255, 255, 0.25);
+  --sidebar-DM-border-radius: 50%;
+
+  //team-info header & subheader
+  --sidebar-header-color: white;
+  --sidebar-subheader-color: rgba(255, 255, 255, 0.69);
+
+  //status colors
+  --sidebar-status-online: #7ed320;
+  --sidebar-status-offline: gray;
+  --sidebar-status-away: yellow;
+
+  /* Chat */
+
+  --chat-background-color: white;
+
+  //header
+  --chat-header-background-color: white;
+  --chat-header-primary-color: #2a2f35;
+  --chat-header-spacer-color: #e7ecf0;
+  --chat-header-secondary-color: #a8b4c0;
+  --chat-header-border-color: #eef2f5;
+
+  //message
+  --chat-message-primary-color: #2a2f35;
+  --chat-message-secondary-color: #afbcc5;
+  --chat-message-hover-background-color: rgba(0, 0, 0, 0.03);
+
+  --chat-message-header-font-size: 15px;
+  --chat-message-header-font-weight: 900;
+  --chat-message-subheader-font-size: 12px;
+  --chat-message-subheader-font-weight: 400;
+
+  --chat-message-user-photo-border-radius: 50%;
+
+}

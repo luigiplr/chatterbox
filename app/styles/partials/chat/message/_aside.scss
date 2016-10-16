@@ -6,7 +6,7 @@
   top: 0;
 
   .profile_pic {
-    border-radius: 50%;
+    border-radius: var(--chat-message-user-photo-border-radius);
     width: 45px;
     height: 45px;
     display: block;
@@ -21,6 +21,6 @@
     margin-left: 5px;
     line-height: 15px;
     font-weight: 400;
-    color: #afbcc5;
+    color: var(--chat-message-secondary-color);
   }
 }

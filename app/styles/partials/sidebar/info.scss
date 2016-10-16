@@ -14,6 +14,7 @@
       font-weight: 600;
       text-rendering: optimizeLegibility;
       letter-spacing: 0.5px;
+      color: var(--sidebar-header-color);
     }
 
     .status {
@@ -24,15 +25,15 @@
       display: inline-block;
 
       &.online {
-        background-color: #7fd421;
+        background-color: var(--sidebar-status-online);
       }
 
       &.offline {
-        background-color: gray;
+        background-color: var(--sidebar-status-offline);
       }
 
       &.away {
-        background-color: yellow;
+        background-color: var(--sidebar-status-away);
       }
     }
 
@@ -42,7 +43,7 @@
       position: relative;
       font-weight: 400;
       top: 1px;
-      color: rgba(255, 255, 255, 0.69);
+      color: var(--sidebar-subheader-color);
     }
   }
 
@@ -67,12 +68,12 @@
       font-size: 14px;
       font-weight: 400;
       letter-spacing: 0.5px;
-      color: rgba(255, 255, 255, 0.5);
+      color: var(--sidebar-channelOrDM-header-color);
       margin-bottom: 5px;
 
       span {
         margin-left: 4px;
-        color: rgba(255, 255, 255, 0.25);
+        color: var(--sidebar-channelOrDM-subheader-color);
       }
     }
 
@@ -113,11 +114,11 @@
     transition: background-color 100ms ease-in-out;
 
     &:hover {
-      background-color: rgba(255, 255, 255, 0.06);
+      background-color: var(--sidebar-channelOrDM-hover-background-color);
     }
 
     &.active {
-      background-color: rgba(255, 255, 255, 0.12);
+      background-color: var(--sidebar-channelOrDM-active-background-color);
     }
 
     .privateIcon {
@@ -129,10 +130,11 @@
     }
 
     .name {
+      display: inline-block;
       padding: 0;
       margin: 0;
       font-size: 14px;
-      color: rgba(255, 255, 255, 0.58);
+      color: var(--sidebar-channelOrDM-text-primary-color);
       font-weight: 400;
       letter-spacing: 0.5px;
       white-space: nowrap;
@@ -142,12 +144,12 @@
     }
 
     &.active p {
-      color: rgba(255, 255, 255, 0.85);
+      color: var(--sidebar-channelOrDM-text-primary-active-color);
     }
 
     &.attention p {
       font-size: 14px;
-      color: rgba(255, 255, 255, 0.85);
+      color: var(--sidebar-channelOrDM-text-primary-active-color);
       font-weight: 600;
     }
 
@@ -175,7 +177,7 @@
     .image {
       width: 32px;
       height: 32px;
-      border-radius: 50%;
+      border-radius: var(--sidebar-DM-border-radius);
       vertical-align: text-top;
       display: inline-block;
       background-position: center;
@@ -199,14 +201,14 @@
     }
 
     &.online .status {
-      background-color: #7ed320;
+      background-color: var(--sidebar-status-online);
     }
 
     .name {
       display: inline-block;
       font-size: 14px;
       line-height: 32px;
-      color: rgba(255, 255, 255, 0.48);
+      color: var(--sidebar-channelOrDM-text-secondary-color);
       font-weight: 400;
       letter-spacing: 0.5px;
       margin-left: 8px;
@@ -218,11 +220,11 @@
     }
 
     &.online .name {
-      color: rgba(255, 255, 255, 0.58);
+      color: var(--sidebar-channelOrDM-text-primary-color);
     }
 
     &.active .name {
-      color: rgba(255, 255, 255, 0.85);
+      color: var(--sidebar-channelOrDM-text-primary-active-color);
     }
   }
 }

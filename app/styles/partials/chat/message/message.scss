@@ -14,7 +14,7 @@
   }
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.03);
+    background-color: var(--chat-message-hover-background-color);
 
     .aside .time {
       opacity: 1;
@@ -36,18 +36,19 @@
         display: inline-block;
 
         &.time {
-          font-size: 12px;
+          font-size: var(--chat-message-subheader-font-size);
           top: -1px;
           position: relative;
           margin-left: 5px;
-          line-height: 15px;
-          font-weight: 400;
-          color: #afbcc5;
+          line-height: var(--chat-message-header-font-size);
+          font-weight: var(--chat-message-subheader-font-weight);
+          color: var(--chat-message-secondary-color);
         }
 
         &.user {
-          font-weight: 900;
-          color: #2a2f33;
+          font-size: var(--chat-message-header-font-size);
+          font-weight: var(--chat-message-header-font-weight);
+          color: var(--chat-message-primary-color);
         }
       }
     }
@@ -57,6 +58,7 @@
       display: flex;
       line-height: 20px;
       white-space: pre-wrap;
+      color: var(--chat-message-primary-color);
     }
   }
 }
