@@ -6,6 +6,7 @@ import { santitizeUser, parseMessage } from './helpers'
 import { teamLoad, teamLoadSuccess, teamLoadFail } from 'actions/chat/team/load'
 import { addMessage } from 'actions/chat/message/add'
 import formatter from './formatter'
+import emojiRegex from './emoji'
 
 export default class SlackHandler {
   constructor({ auth: { token }, id }, dispatch) {
@@ -86,6 +87,7 @@ export default class SlackHandler {
     })
   }
 
+  _emojiRegex = emojiRegex()
 
   /* Start of load methods */
 

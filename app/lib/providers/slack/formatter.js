@@ -1,14 +1,13 @@
 import React from 'react'
-import { compact, isEmpty } from 'lodash'
-import escapeStringRegexp from 'escape-string-regexp'
-import annotations from 'emoji-annotation-to-unicode'
+import { compact, isEmpty, unescape } from 'lodash'
+import { getEscapedKeys } from './helpers'
 import replace from 'frep'
-import uuid from 'node-uuid'
+import { v1 as uuid } from 'node-uuid'
+import { matchEmoji } from './emoji'
 import {
   Code as InlineCode,
   Channel as InlineChannel,
   User as InlineUser,
-  Emoji as InlineEmoji,
   Link as InlineLink
  } from 'components/chat/message/inline.react'
 
@@ -26,13 +25,8 @@ const strikeRegex = /(^|\s|[\?\.,\-!\^;:{(\[%$#+=\u2000-\u206F\u2E00-\u2E7F"])~(
 // const longQuote = /(^|)&gt;&gt;&gt;([\s\S]*$)/
 
 
-const _getKey = key => key.match(/^:.*:$/) ? key.replace(/^:/, '').replace(/:$/, '') : key
-const _getEscapedKeys = hash => Object.keys(hash).map(x => escapeStringRegexp(x)).join('|')
-const emojiWithEmoticons = { delimiter: new RegExp(`(:(?:${_getEscapedKeys(annotations)}):)`, 'g'), dict: annotations }
-
-
 function reparseMatch(match, messageReplacementDict) {
-  const delimiter = new RegExp(`(${_getEscapedKeys(messageReplacementDict)})`, 'g')
+  const delimiter = new RegExp(`(${getEscapedKeys(messageReplacementDict)})`, 'g')
   return compact(
     match.split(delimiter).map((word, index) => {
       const [match] = word.match(delimiter) || []
@@ -49,13 +43,13 @@ export default function formatter(text) {
   if (!text) return text
   const { _users, _channels } = this
 
-  const messageReplacementDict = {}
+  let messageReplacementDict = {}
   const replacements = [{
     pattern: urlRegex,
     replacement: (match) => {
       match = match.trim().slice(1, -1)
       if (match.length > 0) {
-        const replacement = uuid.v1()
+        const replacement = uuid()
         if (match.charAt(0) == '@' || match.charAt(0) == '#') return `<${match}>`
         let split = match.split('|')
         let label = split.length === 2 ? split[1] : split[0]
@@ -72,7 +66,7 @@ export default function formatter(text) {
     replacement: (match) => {
       match = match.trim().slice(3, -3)
       if (match.length > 0) {
-        const replacement = uuid.v1()
+        const replacement = uuid()
 
         match = match.charAt(0) == '\n' ? match.substring(1) : match
 
@@ -90,7 +84,7 @@ export default function formatter(text) {
     replacement: (match) => {
       match = match.trim().slice(1, -1)
       if (match.length > 0) {
-        const replacement = uuid.v1()
+        const replacement = uuid()
 
         if (Object.keys(messageReplacementDict).length > 0) {
           match = reparseMatch(match, messageReplacementDict)
@@ -106,7 +100,7 @@ export default function formatter(text) {
     replacement: (match) => {
       match = match.trim().slice(1, -1)
       if (match.length > 0) {
-        const replacement = uuid.v1()
+        const replacement = uuid()
         messageReplacementDict[replacement] = <b key={replacement}>{match}</b>
         return replacement
       }
@@ -117,7 +111,7 @@ export default function formatter(text) {
     replacement: match => {
       match = match.trim().slice(1, -1)
       if (match.length > 0) {
-        const replacement = uuid.v1()
+        const replacement = uuid()
         messageReplacementDict[replacement] = <i key={replacement}>{match}</i>
         return ` ${replacement}`
       }
@@ -128,7 +122,7 @@ export default function formatter(text) {
     replacement: match => {
       match = match.trim().slice(1, -1)
       if (match.length > 0) {
-        const replacement = uuid.v1()
+        const replacement = uuid()
         messageReplacementDict[replacement] = <em key={replacement}>{match}</em>
         return replacement
       }
@@ -139,7 +133,7 @@ export default function formatter(text) {
     replacement: match => {
       match = match.trim()
       if (match.length > 0) {
-        const replacement = uuid.v1()
+        const replacement = uuid()
         if (match.includes('<@')) {
           const user = match.replace(/<|>|@/g, '')
           if (_users[user]) {
@@ -159,22 +153,19 @@ export default function formatter(text) {
       return match
     }
   }, {
-    pattern: emojiWithEmoticons.delimiter,
-    replacement: (match) => {
-      const key = _getKey(match)
-      const hex = emojiWithEmoticons.dict[key]
-      if (hex) {
-        const replacement = uuid.v1()
-        messageReplacementDict[replacement] = <InlineEmoji hex={hex} key={replacement} name={key} />
-        return replacement
-      }
-      return match
+    pattern: this._emojiRegex.delimiter,
+    replacement: match => {
+      const {
+        parsed,
+        messageReplacementDict: newMessageReplacementDict
+      } = matchEmoji.bind(this)(match, messageReplacementDict)
+      return parsed
     }
   }]
 
-  const formattedText = _.unescape(replace.strWithArr(text, replacements))
+  const formattedText = unescape(replace.strWithArr(text, replacements))
   if (isEmpty(messageReplacementDict)) return formattedText
-  const delimiter = new RegExp(`(${_getEscapedKeys(messageReplacementDict)})`, 'g')
+  const delimiter = new RegExp(`(${getEscapedKeys(messageReplacementDict)})`, 'g')
   return compact(
     formattedText.split(delimiter).map((word, index) => {
       const [match] = word.match(delimiter) || []

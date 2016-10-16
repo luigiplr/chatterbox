@@ -1,4 +1,5 @@
 import { filter, get, last, omitBy, isNil } from 'lodash'
+import escapeStringRegexp from 'escape-string-regexp'
 import path from 'path'
 import moment from 'moment'
 import crypto from 'crypto'
@@ -6,6 +7,10 @@ import formatter from './formatter'
 import santitizeAttachments from './attachments'
 import { addMessage } from 'actions/chat/message/add'
 import { messageEdited } from 'actions/chat/message/edit'
+
+export function getEscapedKeys(hash){
+  return Object.keys(hash).map(x => escapeStringRegexp(x)).join('|')
+}
 
 function extractWidthFromImage(image) {
   const { name } = path.parse(image)
