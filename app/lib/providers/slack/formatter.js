@@ -159,6 +159,7 @@ export default function formatter(text) {
         parsed,
         messageReplacementDict: newMessageReplacementDict
       } = matchEmoji.bind(this)(match, messageReplacementDict)
+      messageReplacementDict = newMessageReplacementDict
       return parsed
     }
   }]
