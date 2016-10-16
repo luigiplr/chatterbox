@@ -48,11 +48,11 @@ export default class Attachments extends PureComponent {
   }
 }
 
-function Image({ url, width, height }) {
+function Image({ url, width, height }, { preRenderingMeasure }) {
   const { width: parsedWidth, height: parsedHeight } = extractImageDimentions(width, height)
   return (
     <div className={styles.bigImage} style={{ maxWidth: `${parsedWidth}px`, height: `${parsedHeight}px` }}>
-      <ImageLoader src={url} />
+      {!preRenderingMeasure && <ImageLoader src={url} />}
     </div>
   )
 }
@@ -65,10 +65,10 @@ function Text({ text, isPretext = true }) {
   )
 }
 
-function Thumb({ url }) {
+function Thumb({ url }, { preRenderingMeasure }) {
   return (
     <div className={styles.thumb_container}>
-      <div className={styles.thumb} style={{backgroundImage: `url(${url})`}} />
+      <div className={styles.thumb} style={{backgroundImage: `url(${!preRenderingMeasure && url})`}} />
     </div>
   )
 }
@@ -86,26 +86,28 @@ function Fields({ data }) { // eslint-disable-line react/prop-types
   )
 }
 
-function Author({ name, link, image, service = {} }){
+function Author({ name, link, image, service = {} }, { preRenderingMeasure }){
   const { image: serviceImage, name: serviceName } = service
   return (
     <div className={styles.author_container}>
-      {serviceImage && <div className={styles.img} style={{backgroundImage: `url(${serviceImage})`}} />}
+      {serviceImage && <div className={styles.img} style={{backgroundImage: `url(${!preRenderingMeasure && serviceImage})`}} />}
       {serviceName && <div className={styles.serviceName}>{serviceName}{name && ' |'}</div>}
-      {image && <div className={styles.img} style={{backgroundImage: `url(${image})`}} />}
+      {image && <div className={styles.img} style={{backgroundImage: `url(${!preRenderingMeasure && image})`}} />}
       {name && <div className={styles.name}>{name}</div>}
     </div>
   )
 }
 
-function Video({ url, width, height, type }) {
+function Video({ url, width, height, type }, { preRenderingMeasure }) {
   return (
     <div style={{ width: width > 500 ? 500 : width, height: height > 375 ? 375 : height}} className={styles.video_container}>
-      <VideoPlayer
-        className={styles.player}
-        url={url}
-        controls
-      />
+      {!preRenderingMeasure && (
+        <VideoPlayer
+          className={styles.player}
+          url={url}
+          controls
+        />
+      )}
     </div>
   )
 }

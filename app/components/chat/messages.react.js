@@ -170,10 +170,11 @@ export default class Messages extends Component {
   }
 
   @autobind
-  _messageRenderer({ index, rowIndex, style = {}, isScrolling, key }) {
+  _messageRenderer({ index, rowIndex, style, isScrolling, key }) {
     const messageIndex = index === undefined ? rowIndex : index
+    const preRenderingMeasure = style === undefined
     const { channelorDMID, team } = this.props
-    return <Message style={style} key={messageIndex} index={messageIndex} channelorDMID={channelorDMID} team={team} />
+    return <Message style={style} key={messageIndex} index={messageIndex} channelorDMID={channelorDMID} team={team} preRenderingMeasure={preRenderingMeasure} />
   }
 
   @autobind

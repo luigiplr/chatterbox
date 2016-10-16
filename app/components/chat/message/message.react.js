@@ -30,12 +30,22 @@ export default class Message extends Component {
     attachments: PropTypes.array,
     sendingID: PropTypes.string,
     edited: PropTypes.string,
-    index: PropTypes.number.isRequired
+    index: PropTypes.number.isRequired,
+    preRenderingMeasure: PropTypes.bool.isRequired
   }
 
   static contextTypes = {
     users: PropTypes.object.isRequired,
     recomputeRowHeight: PropTypes.func.isRequired
+  }
+
+  static childContextTypes = {
+    preRenderingMeasure: PropTypes.bool.isRequired
+  }
+
+  getChildContext() {
+    const { preRenderingMeasure } = this.props
+    return { preRenderingMeasure }
   }
 
   get user() {

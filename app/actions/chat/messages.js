@@ -3,7 +3,6 @@ export const MESSAGES_LOAD = 'MESSAGES_LOAD'
 export const MESSAGES_LOAD_SUCCESS = 'MESSAGES_LOAD_SUCCESS'
 export const MESSAGES_LOAD_FAIL = 'MESSAGES_LOAD_FAIL'
 
-
 export function loadMoreChannelOrDMMessages() {
   return (dispatch, getState) => {
     const { chat: { team: { focusedTeam, focusedChannelOrDM }, messages } } = getState()
