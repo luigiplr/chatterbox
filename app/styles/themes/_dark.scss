@@ -11,7 +11,7 @@
   --sidebar-channelOrDM-text-secondary-color: rgba(255, 255, 255, 0.48);
   --sidebar-channelOrDM-header-color: rgba(255, 255, 255, 0.5);
   --sidebar-channelOrDM-subheader-color: rgba(255, 255, 255, 0.25);
-  --sidebar-DM-border-radius: 50%;
+  --sidebar-DM-border-radius: 15%;
 
   //team-info header & subheader
   --sidebar-header-color: #95a5a6;
@@ -45,5 +45,5 @@
 
   --chat-message-font-size: 15px;
   --chat-message-line-height: 20px;
-  --chat-message-user-photo-border-radius: 50%;
+  --chat-message-user-photo-border-radius: 15%;
 }
