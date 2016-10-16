@@ -28,6 +28,9 @@
     font-weight: 700;
     margin-top: 6px;
     color: var(--chat-header-secondary-color);
+    img { // Emojis
+      height: 13px;
+    }
   }
 
   div {

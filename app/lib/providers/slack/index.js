@@ -5,6 +5,7 @@ import moment from 'moment'
 import { santitizeUser, parseMessage } from './helpers'
 import { teamLoad, teamLoadSuccess, teamLoadFail } from 'actions/chat/team/load'
 import { addMessage } from 'actions/chat/message/add'
+import formatter from './formatter'
 
 export default class SlackHandler {
   constructor({ auth: { token }, id }, dispatch) {
@@ -101,7 +102,7 @@ export default class SlackHandler {
         main,
         members: members && members.map(id => _users[id] ? id : false).filter(Boolean) || [],
         meta: {
-          topic: get(topic, 'value', null),
+          topic: formatter.bind(this)(get(topic, 'value', null)),
           purpose: get(purpose, 'value', null)
         }
       })
