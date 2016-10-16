@@ -61,7 +61,7 @@ export default class Message extends Component {
   }
 
   render() {
-    const { style, firstInChain, friendlyTimestamp, text, attachments, sendingID, edited, index, preRenderingMeasure } = this.props
+    const { style, firstInChain, friendlyTimestamp, text, attachments, sendingID, edited, team, channelorDMID } = this.props
     const { user } = this
     const className = classnames(
       styles.message_container,
@@ -72,8 +72,13 @@ export default class Message extends Component {
     if(edited) console.log(edited)
 
     return (
-      <ReactCSSTransitionGroupWrapper>
-        <div className={className} style={style} key={index}>
+      <ReactCSSTransitionGroup
+        transitionName='message'
+        transitionEnterTimeout={80}
+        transitionLeave={false}
+        style={style}
+        className={styles.animation_container}>
+        <div className={className} key={team+channelorDMID}>
           <Aside {...user} firstInChain={firstInChain} friendlyTimestamp={friendlyTimestamp} />
           <div className={styles.body}>
             {firstInChain && <Info edited={edited} {...user} friendlyTimestamp={friendlyTimestamp} />}
@@ -81,20 +86,9 @@ export default class Message extends Component {
             {attachments && <Attachments attachments={attachments} />}
           </div>
         </div>
-      </ReactCSSTransitionGroupWrapper>
+      </ReactCSSTransitionGroup>
     )
   }
-}
-
-function ReactCSSTransitionGroupWrapper({ children }, { preRenderingMeasure }) {
-  return preRenderingMeasure ? children : (
-    <ReactCSSTransitionGroup
-      transitionName='message'
-      transitionEnterTimeout={80}
-      transitionLeave={false}>
-      {children}
-    </ReactCSSTransitionGroup>
-  )
 }
 
 function Info({ handle, friendlyTimestamp, edited }){

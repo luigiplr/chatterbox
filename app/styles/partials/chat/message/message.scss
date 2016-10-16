@@ -1,10 +1,15 @@
 @import '../../../modules/keyframes';
 
+.animation_container {
+  display: flex;
+}
+
 .message_container {
   -webkit-user-select: text;
   display: flex;
+  flex: 1;
   padding: 3px 5px 3px 0;
-  transition: background-color 50ms ease-in-out;
+  transition: background-color 50ms ease-in-out, opacity 40ms ease-in;
   word-break: break-word;
 
   &.sending {
