@@ -25,9 +25,10 @@ export default class Attachments extends PureComponent {
           {text && <Text isPretext={false} text={text} />}
           {fields && <Fields data={fields} />}
           {video && <Video {...video} />}
+          {images.image && renderSidebar && <Image key='image' {...images.image} />}
         </div>
       </div>,
-      images.image && <Image key='image' {...images.image} />,
+      images.image && !renderSidebar && <Image key='image' {...images.image} />,
       images.thumb && !video && <Thumb key='thumb-image' url={images.thumb.url} />,
     ])
   }
@@ -77,7 +78,7 @@ function Fields({ data }) { // eslint-disable-line react/prop-types
   return (
     <div className={styles.fields_container}>
       {data.map(({short, value = '', title = ''}, i) => (
-        <div key={i+1} className={classnames(styles.field, { [styles.short]: styles })}>
+        <div key={i+1} className={classnames(styles.field, { [styles.short]: short })}>
           <h3>{title}</h3>
           <p>{value}</p>
         </div>
