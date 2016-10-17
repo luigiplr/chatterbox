@@ -45,7 +45,7 @@ export default class SlackHandler {
       console.error('o shit dawg, slack suffered some fuckin catastrophic error')
     })
 
-    this._slack.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, () => {
+    this._slack.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, async() => {
       this._canSend = true
 
       const { users, user } = this._loadUsers()
@@ -53,7 +53,7 @@ export default class SlackHandler {
       this._channels = this._loadChannles()
       this._dms = this._loadDirectMessages()
       this._team = this._loadTeam()
-      this._loadCustomEmoji()
+      await this._loadCustomEmoji()
 
       dispatch(teamLoadSuccess({
         channels: this._channels,
@@ -84,10 +84,11 @@ export default class SlackHandler {
   _emojiRegex = updateEmojiRegex()
 
   _loadCustomEmoji() {
-    this._slack._webClient.emoji.list().then(data => {
-      if (data.ok && data.emoji) {
-        setEmojis.bind(this)(data.emoji)
-      } else console.error("Error fetching custom emoji", data)
+    return this._slack._webClient.emoji.list().then(({ ok, emoji }) => {
+      if (ok && emoji) {
+        return setEmojis.bind(this)(emoji)
+      }
+      console.error('Error fetching custom emoji')
     })
   }
 
