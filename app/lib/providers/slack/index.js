@@ -6,7 +6,7 @@ import { santitizeUser, parseMessage } from './helpers'
 import { teamLoad, teamLoadSuccess, teamLoadFail } from 'actions/chat/team/load'
 import { addMessage } from 'actions/chat/message/add'
 import formatter from './formatter'
-import emojiRegex from './emoji'
+import { onEmojiChange, setEmojis, updateEmojiRegex } from './emoji'
 
 export default class SlackHandler {
   constructor({ auth: { token }, id }, dispatch) {
@@ -45,7 +45,7 @@ export default class SlackHandler {
       console.error('o shit dawg, slack suffered some fuckin catastrophic error')
     })
 
-    this._slack.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, () => {
+    this._slack.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, async() => {
       this._canSend = true
 
       const { users, user } = this._loadUsers()
@@ -53,6 +53,7 @@ export default class SlackHandler {
       this._channels = this._loadChannles()
       this._dms = this._loadDirectMessages()
       this._team = this._loadTeam()
+      await this._loadCustomEmoji()
 
       dispatch(teamLoadSuccess({
         channels: this._channels,
@@ -65,6 +66,11 @@ export default class SlackHandler {
 
     this._slack.on(RTM_EVENTS.MESSAGE, m => this._parseMessage(m, true))
 
+    this._slack.on(RTM_EVENTS.EMOJI_CHANGED, data => {
+      if (!data.subtype) return this._loadCustomEmoji()
+      onEmojiChange.bind(this)(data)
+    })
+
     this._slack.start()
   }
 
@@ -74,6 +80,18 @@ export default class SlackHandler {
 
   _canSend = false
   _connected = false
+
+  _emojiRegex = updateEmojiRegex()
+
+  _loadCustomEmoji() {
+    return this._slack._webClient.emoji.list().then(({ ok, emoji }) => {
+      if (ok && emoji) {
+        return setEmojis.bind(this)(emoji)
+      }
+      console.error('Error fetching custom emoji')
+    })
+  }
+
 
   loadHistory(channel_or_dm_id, { count = 100, latest = null, oldest = null, inclusive = 0 } = {}) {
     return new Promise((resolve, reject) => {
@@ -86,8 +104,6 @@ export default class SlackHandler {
       })
     })
   }
-
-  _emojiRegex = emojiRegex()
 
   /* Start of load methods */
 
