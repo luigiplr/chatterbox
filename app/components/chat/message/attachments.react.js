@@ -52,7 +52,7 @@ export default class Attachments extends PureComponent {
 function Image({ url, width, height }, { preRenderingMeasure }) {
   const { width: parsedWidth, height: parsedHeight } = extractImageDimentions(width, height)
   return (
-    <div className={styles.bigImage} style={{ maxWidth: `${parsedWidth}px`, height: `${parsedHeight}px` }}>
+    <div className={styles.bigImage} style={{ width: `${parsedWidth}px`, height: `${parsedHeight}px` }}>
       {!preRenderingMeasure && <ImageLoader src={url} />}
     </div>
   )
