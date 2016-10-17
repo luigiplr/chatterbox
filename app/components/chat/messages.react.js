@@ -60,6 +60,12 @@ export default class Messages extends Component {
 
   componentDidMount() {
     this._scrollTop = this._list.Grid._scrollingContainer.scrollTop
+
+    // for debugging css
+    global._resetChatMeasurements = () => {
+      cellSizeCache.clearAllRowHeights()
+      this._list.forceUpdateGrid()
+    }
   }
 
   componentWillUpdate(nextProps) {
@@ -113,6 +119,7 @@ export default class Messages extends Component {
     const { channelorDMID, team, changeFocusedMessageIndex } = this.props
     changeFocusedMessageIndex(team, channelorDMID, this._stopIndex)
     cellSizeCache.clearAllRowHeights()
+    global._resetChatMeasurements = null
   }
 
   @autobind
