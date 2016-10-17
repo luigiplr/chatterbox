@@ -6,7 +6,8 @@ import createLogger from 'redux-logger'
 import rootReducer from '../reducers'
 
 const logger = createLogger({
-  level: 'info',
+  level: 'log',
+  duration: true,
   collapsed: true
 })
 
@@ -18,7 +19,7 @@ const enhancer = compose(
   window.devToolsExtension() : noop => noop
 )
 
-export default function configureStore(initialState: Object) {
+export default function configureStore(initialState) {
   const store = createStore(rootReducer, initialState, enhancer)
 
   if (window.devToolsExtension) {

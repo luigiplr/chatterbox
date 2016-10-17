@@ -1,8 +1,0 @@
-.message-enter {
-  opacity: 0;
-}
-
-.message-enter.message-enter-active {
-  opacity: 1;
-  transition: opacity 80ms ease-in;
-}

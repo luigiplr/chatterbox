@@ -1,5 +1,4 @@
 import React, { Component, PureComponent, PropTypes } from 'react'
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import memoizee from 'memoizee'
 import { uniq, get, reduce, findIndex } from 'lodash'
 import { connect } from 'react-redux'
@@ -37,7 +36,8 @@ export default class Message extends Component {
 
   static contextTypes = {
     users: PropTypes.object.isRequired,
-    recomputeRowHeight: PropTypes.func.isRequired
+    recomputeRowHeight: PropTypes.func.isRequired,
+    shouldFadeIn: PropTypes.bool.isRequired
   }
 
   static childContextTypes = {
@@ -49,44 +49,46 @@ export default class Message extends Component {
     return { preRenderingMeasure }
   }
 
+  componentDidMount() {
+    console.info('[message]', 'componentDidMount() w/preRenderingMeasure: ', this.props.preRenderingMeasure)
+  }
+
+  componentDidUpdate({ edited: prevEdited }) {
+    const { edited, preRenderingMeasure } = this.props
+    if (prevEdited !== edited && !preRenderingMeasure) {
+      this.context.recomputeRowHeight(this.props.index)
+      console.info('[message]', 'Triggering self re-measure of index: ', this.props.index)
+    }
+  }
+
   get user() {
     const { props: { user, userProfile }, context: { users } } = this
     return userProfile || users[user] || {}
   }
 
-  componentDidUpdate({ edited: prevEdited }) {
-    if (prevEdited !== this.props.edited) {
-      this.context.recomputeRowHeight(this.props.index)
-    }
-  }
-
   render() {
-    const { style, firstInChain, friendlyTimestamp, text, attachments, sendingID, edited, team, channelorDMID } = this.props
-    const { user } = this
+    const {
+      props: { style, firstInChain, friendlyTimestamp, text, attachments, sendingID, edited },
+      context: { shouldFadeIn },
+      user
+    } = this
+
     const className = classnames(
       styles.message_container,
       {[styles.firstInChain]: firstInChain},
-      {[styles.sending]: sendingID}
+      {[styles.sending]: sendingID},
+      {[styles.fadeIn]: shouldFadeIn}
     )
 
-    if(edited) console.log(edited)
-
     return (
-      <ReactCSSTransitionGroup
-        transitionName='message'
-        transitionEnterTimeout={80}
-        transitionLeave={false}
-        style={style}
-        className={styles.animation_container}>
-        <div className={className} key={team+channelorDMID}>
-          <Aside {...user} firstInChain={firstInChain} friendlyTimestamp={friendlyTimestamp} />
-          <div className={styles.body}>
-            {firstInChain && <Info edited={edited} {...user} friendlyTimestamp={friendlyTimestamp} />}
-            {text && <div className={styles.text}>{text}</div>}
-            {attachments && <Attachments attachments={attachments} />}
-          </div>
+      <div className={className} style={style}>
+        <Aside {...user} firstInChain={firstInChain} friendlyTimestamp={friendlyTimestamp} />
+        <div className={styles.body}>
+          {firstInChain && <Info edited={edited} {...user} friendlyTimestamp={friendlyTimestamp} />}
+          {text && <div className={styles.text}>{text}</div>}
+          {attachments && <Attachments attachments={attachments} />}
         </div>
-      </ReactCSSTransitionGroup>
+      </div>
     )
   }
 }

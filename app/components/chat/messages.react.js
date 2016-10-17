@@ -51,11 +51,19 @@ export default class Messages extends Component {
   }
 
   static childContextTypes = {
-    recomputeRowHeight: PropTypes.func.isRequired
+    recomputeRowHeight: PropTypes.func.isRequired,
+    shouldFadeIn: PropTypes.bool.isRequired
+  }
+
+  state = {
+    shouldFadeIn: true
   }
 
   getChildContext() {
-    return { recomputeRowHeight: this._recomputeRowHeight }
+    return {
+      recomputeRowHeight: this._recomputeRowHeight,
+      shouldFadeIn: this.state.shouldFadeIn
+    }
   }
 
   componentDidMount() {
@@ -72,6 +80,7 @@ export default class Messages extends Component {
     const { channelorDMID, team } = this.props
 
     if(nextProps.team !== team || channelorDMID !== nextProps.channelorDMID) {
+      console.info('[messages]', "channel or team id's have changed, resetting all internals and saving scroll position")
       this.props.changeFocusedMessageIndex(team, channelorDMID, this._stopIndex)
       this._resetInternals()
       return
@@ -90,6 +99,7 @@ export default class Messages extends Component {
       const oldIndex = (nextProps.messages - messages + this._stopIndex) - 2
       this.props.changeFocusedMessageIndex(team, channelorDMID, oldIndex)
       this._loadedNewMessages = true
+      console.info('[messages]', 'large batch of new messages about to arrive (probs history load), clearing row heights')
       return
     }
 
@@ -106,16 +116,19 @@ export default class Messages extends Component {
   componentDidUpdate(prevProps) {
     if(this._loadedNewMessages) {
       this._loadedNewMessages = false
+      console.info('[messages]', 'finnished loading of batched new messages')
       return
     }
 
     if(this._scrollingToBottom && !this._scrolling) {
       this._scrolling = true
+      console.info('[messages]', 'scrolling to the bottom')
       this._scrollDown()
     }
   }
 
   componentWillUnmount() {
+    console.info('[messages]', 'component unmounting, saving scroll position & resetting row heights')
     const { channelorDMID, team, changeFocusedMessageIndex } = this.props
     changeFocusedMessageIndex(team, channelorDMID, this._stopIndex)
     cellSizeCache.clearAllRowHeights()
@@ -151,6 +164,7 @@ export default class Messages extends Component {
     this._hasRenderedInitial = false
     this._scrollingToBottom = false
     cellSizeCache.clearAllRowHeights()
+    this.setState({ shouldFadeIn: true })
   }
 
   _handleContainerScroll({ target }) {
@@ -179,6 +193,7 @@ export default class Messages extends Component {
     } else {
       this._scrolling = false
       this._scrollingToBottom = false
+      console.info('[messages]', 'finnished scrolling to bottom')
     }
   }
 
@@ -192,6 +207,7 @@ export default class Messages extends Component {
 
   @autobind
   _recomputeRowHeight(index) {
+    console.info('[messages]', 'Recomputing row height for index:', index)
     cellSizeCache.clearRowHeight(index)
     const { _list } = this
     if(_list) {
@@ -214,17 +230,21 @@ export default class Messages extends Component {
 
   @autobind
   _onRowsRendered({ startIndex, stopIndex }) {
+    console.info('[messages]', `Rendered rows ${startIndex} through ${stopIndex}`)
     this._startIndex = startIndex
     this._stopIndex = stopIndex
 
     if(!this._hasRenderedInitial) {
+      console.info('[messages]', 'Initial messages render complete')
       this._hasRenderedInitial = true
+      this.setState({ shouldFadeIn: false })
       return
     }
   }
 
   render() {
     const { messages, team, channelorDMID, focusedMessageID } = this.props
+    console.info('[messages]', 'render()')
     return (
       <section className={styles.messages}>
         <AutoSizer key={`${team}-${channelorDMID}`}>
