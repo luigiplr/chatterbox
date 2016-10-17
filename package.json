@@ -72,6 +72,7 @@
     "core-decorators": "^0.12.3",
     "css-modules-require-hook": "^4.0.5",
     "electron-debug": "^1.0.1",
+    "electron-window-state": "^3.1.0",
     "emoji-annotation-to-unicode": "^0.2.4",
     "escape-string-regexp": "^1.0.5",
     "font-awesome": "^4.6.3",

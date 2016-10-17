@@ -1,2 +1,6 @@
 @import 'themes/light';
 @import 'themes/dark';
+
+body {
+  transition: background-color 90ms, color 90ms;
+}
