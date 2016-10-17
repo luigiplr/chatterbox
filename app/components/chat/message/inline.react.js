@@ -6,13 +6,14 @@ import styles from 'styles/partials/chat/message/inline.scss'
 
 const buildImageUrl = (hex, ext = 'png') => `http://cdn.jsdelivr.net/emojione/assets/${ext}/${hex.toUpperCase()}.${ext}`
 
-export function Emoji({ name, hex, custom }) {
-  return <img className={styles.emoji} title={name} src={custom ? hex : buildImageUrl(hex)} />
+export function Emoji({ name, hex, url }) {
+  return <img className={styles.emoji} title={name} src={url || buildImageUrl(hex)} />
 }
 
 Emoji.propTypes = {
   name: PropTypes.string,
-  hex: PropTypes.string.isRequired
+  hex: PropTypes.string,
+  url: PropTypes.string
 }
 
 export function Code({ code, block = false }) {

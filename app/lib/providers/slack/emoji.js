@@ -1,4 +1,5 @@
 import React from 'react'
+import { forEach, omitBy, isNil } from 'lodash'
 import annotations from 'emoji-annotation-to-unicode'
 import { getEscapedKeys } from './helpers'
 import { v1 as uuid } from 'node-uuid'
@@ -8,39 +9,65 @@ const _getKey = key => key.match(/^:.*:$/) ? key.replace(/^:|:$/g, '') : key
 
 export function matchEmoji(match, messageReplacementDict) {
   const key = _getKey(match)
-  const hex = this._emojiRegex.hex[key]
-  const isCustom = hex && hex.startsWith('http')
+  const [url, hex] = [this._emojiRegex.url[key], this._emojiRegex.hex[key]]
   let parsed = match
-  if (hex) {
+  if (hex || url) {
     const replacement = uuid()
-    messageReplacementDict[replacement] = <InlineEmoji hex={hex} custom={isCustom} key={replacement} name={key} />
+    messageReplacementDict[replacement] = <InlineEmoji hex={hex} url={url} key={replacement} name={key} />
     parsed = replacement
   }
   return { parsed, messageReplacementDict }
 }
 
-export function onEmojiChange(data) {
-  console.log("EMOJI CHANGE", data)
-  let emojiList = this._emojiRegex.hex
-  if (data.subtype == 'remove') data.names.forEach(emoji => delete emojiList[emoji])
-  else if (data.subtype == 'add') {
-    let value = data.value.startsWith('alias:') ? emojiList[data.value.split(':')[1]] : data.value
-    emojiList[data.name] = value
+export function onEmojiChange({ subtype, value, names, name }) {
+  let { hex, url } = this._emojiRegex
+  if (subtype == 'remove') {
+    names.forEach(emoji => {
+      if(hex[emoji]) delete hex[emoji]
+      else if(url[emoji]) delete url[emoji]
+    })
+  } else if (subtype == 'add') {
+    const allEmojis = { ...hex, ...url }
+
+    if(value.startsWith('alias:')) {
+      value = value.replace(/alias:/, '')
+      if(allEmojis[value]) {
+        value = allEmojis[value]
+      }
+    }
+
+    if(value.includes('http')) {
+      url[name] = value
+      return
+    }
+
+    hex[name] = value
   }
-  this._emojiRegex = updateEmojiRegex(emojiList)
+  this._emojiRegex = updateEmojiRegex(hex, url, true)
 }
 
 export function setEmojis(emojis) {
-  let emojiList = Object.assign({}, annotations, emojis)
-  _.forEach(emojiList, (value, key) => {
-    if (value.startsWith('alias:')) emojiList[key] = emojiList[value.split(':')[1]]
+  const [hexAnnotations, urlAnnotations] = [{}, {}]
+  forEach(emojis, (value, key) => {
+    if(value.startsWith('alias:')) {
+      value = value.replace(/alias:/, '')
+      if(emojis[value]) {
+        urlAnnotations[key] = emojis[value]
+        return
+      }
+      hexAnnotations[key] = value
+      return
+    }
+    urlAnnotations[key] = value
   })
-  this._emojiRegex = updateEmojiRegex(emojiList)
+  this._emojiRegex = updateEmojiRegex(hexAnnotations, urlAnnotations)
 }
 
-export function updateEmojiRegex(emojiList = annotations) {
+export function updateEmojiRegex(hexAnnotations = {}, urlAnnotations = {}, annotationsIncluded = false) {
+  const annotationsRelative = annotationsIncluded ? {} : annotations
   return {
-    delimiter: new RegExp(`(:(?:${getEscapedKeys(emojiList)}):)`, 'g'),
-    hex: emojiList
+    delimiter: new RegExp(`(:(?:${getEscapedKeys({ ...hexAnnotations, ...annotationsRelative, ...urlAnnotations })}):)`, 'g'),
+    hex: { ...hexAnnotations, ...annotationsRelative },
+    url: urlAnnotations
   }
 }
