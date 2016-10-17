@@ -143,11 +143,19 @@ class Aside extends PureComponent {
     images: []
   }
 
+  static contextTypes = {
+    preRenderingMeasure: PropTypes.bool.isRequired
+  }
+
   render() {
-    const { firstInChain, friendlyTimestamp, images, image, screen: { width } } = this.props
+    const {
+      props: { firstInChain, friendlyTimestamp, images, image, screen: { width } },
+      context: { preRenderingMeasure }
+    } = this
+    
     return (
       <div className={styles.aside}>
-        {firstInChain ? <div style={{backgroundImage: `url(${findImageFromImages(images, image, width)})`}} className={styles.profile_pic} /> : (
+        {firstInChain ? <div style={{backgroundImage: `url(${!preRenderingMeasure && findImageFromImages(images, image, width)})`}} className={styles.profile_pic} /> : (
           <span className={styles.time}>
             {friendlyTimestamp}
           </span>
