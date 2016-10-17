@@ -1,4 +1,5 @@
 import { app, BrowserWindow, Menu, shell } from 'electron'
+import windowStateKeeper from 'electron-window-state'
 
 let menu
 let template
@@ -35,11 +36,19 @@ const installExtensions = async() => {
 app.on('ready', async() => {
   await installExtensions()
 
-  mainWindow = new BrowserWindow({
-    show: false,
-    width: 1024,
-    height: 728
+  const { manage, ...mainWindowState } = windowStateKeeper({
+    defaultWidth: 1024,
+    defaultHeight: 728
   })
+
+  mainWindow = new BrowserWindow({
+    ...mainWindowState,
+    show: false,
+    minWidth: 1024,
+    minHeight: 728
+  })
+
+  manage(mainWindow)
 
   mainWindow.loadURL(`file://${__dirname}/app/app.html`);
 
